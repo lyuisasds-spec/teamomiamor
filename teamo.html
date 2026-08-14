@@ -5,18 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
   <title>Para ti, mi amor</title>
 
-  <!-- ============================================================
-  PERSONALIZA AQUÍ:
-  1. Busca "MI AMOR" (en mayúsculas) y reemplázalo por su nombre.
-  2. Edita los textos donde dice "EDITA ESTO".
-  3. Las fotos van en carpeta /imagenes (foto1.jpeg a foto8.jpeg).
-  ============================================================ -->
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,700&family=Caveat:wght@500;700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* ===== RESET Y VARIABLES ===== */
+
     * {
       margin: 0;
       padding: 0;
@@ -67,7 +60,6 @@
       font-weight: 700;
     }
 
-    /* ===== FONDO DE CORAZONES ===== */
     #hearts-canvas {
       position: fixed;
       inset: 0;
@@ -83,7 +75,6 @@
       z-index: 1;
     }
 
-    /* ===== REVELADO SCROLL ===== */
     .reveal {
       opacity: 0;
       transform: translateY(30px);
@@ -94,7 +85,6 @@
       transform: translateY(0);
     }
 
-    /* ===== SEPARADOR CON CORAZÓN ===== */
     .costura {
       display: flex;
       align-items: center;
@@ -111,7 +101,6 @@
       opacity: 0.3;
     }
 
-    /* ===== HERO ===== */
     .hero {
       min-height: 100svh;
       display: flex;
@@ -199,7 +188,6 @@
       50% { transform: translateY(8px); }
     }
 
-    /* ===== TÍTULO DE SECCIÓN ===== */
     .seccion-titulo {
       text-align: center;
       padding: 0 1.5rem;
@@ -224,7 +212,6 @@
       color: transparent;
     }
 
-    /* ===== ÁLBUM ===== */
     .album {
       padding: 5rem 1.25rem 6rem;
       background: linear-gradient(180deg, var(--violeta-oscuro), var(--violeta-profundo) 40%, var(--violeta-oscuro));
