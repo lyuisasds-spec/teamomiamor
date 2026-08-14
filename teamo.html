@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <title>Para ti, mi amor</title>
+
+  <!-- ============================================================
+  PERSONALIZA AQUÍ:
+  1. Busca "MI AMOR" (en mayúsculas) y reemplázalo por su nombre.
+  2. Edita los textos donde dice "EDITA ESTO".
+  3. Las fotos van en carpeta /imagenes (foto1.jpeg a foto8.jpeg).
+  ============================================================ -->
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,700&family=Caveat:wght@500;700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== RESET Y VARIABLES ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --violeta-oscuro: #1e1035;
+      --violeta-profundo: #2a1a47;
+      --violeta-medio: #5b3a8e;
+      --violeta-luz: #8b6bc0;
+      --lavanda: #b79bea;
+      --lavanda-suave: #e9defb;
+      --rosa: #f26b9e;
+      --dorado: #fbd48a;
+      --crema: #fcf7ff;
+      --sombra-suave: 0 20px 45px rgba(20, 10, 35, 0.6);
+      --sombra-fuerte: 0 30px 60px rgba(0, 0, 0, 0.5);
+      --borde-luz: 1px solid rgba(183, 155, 234, 0.2);
+    }
+
+    html {
+      scroll-behavior: smooth;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--violeta-oscuro);
+      color: var(--crema);
+      font-family: 'Quicksand', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
+    }
+
+    h1, h2, h3 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .script {
+      font-family: 'Caveat', cursive;
+      font-weight: 700;
+    }
+
+    /* ===== FONDO DE CORAZONES ===== */
+    #hearts-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    section {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ===== REVELADO SCROLL ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== SEPARADOR CON CORAZÓN ===== */
+    .costura {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      max-width: 34rem;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 0.5rem;
+      color: var(--lavanda);
+    }
+    .costura .linea {
+      flex: 1;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, var(--lavanda), transparent);
+      opacity: 0.3;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6rem 1.5rem 4rem;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(242, 107, 158, 0.2), transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(139, 107, 192, 0.25), transparent 50%),
+        linear-gradient(160deg, var(--violeta-oscuro), #140b24 80%);
+      position: relative;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 120px;
+      background: linear-gradient(to top, var(--violeta-oscuro), transparent);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: 'Caveat', cursive;
+      font-size: clamp(1.4rem, 3.5vw, 2rem);
+      color: var(--dorado);
+      letter-spacing: 0.06em;
+      margin-bottom: 0.3rem;
+      opacity: 0;
+      animation: subir 1s ease forwards 0.2s;
+    }
+
+    .hero h1 {
+      font-size: clamp(3.2rem, 9vw, 6rem);
+      line-height: 1.05;
+      font-weight: 700;
+      background: linear-gradient(120deg, #fff 20%, var(--lavanda) 50%, var(--rosa) 80%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      opacity: 0;
+      animation: subir 1.1s ease forwards 0.4s;
+      text-shadow: 0 0 60px rgba(183, 155, 234, 0.15);
+    }
+
+    .hero p.subtitulo {
+      max-width: 38rem;
+      margin: 1.2rem auto 0;
+      font-size: clamp(1rem, 2.2vw, 1.25rem);
+      color: var(--lavanda-suave);
+      opacity: 0.9;
+      opacity: 0;
+      animation: subir 1s ease forwards 0.7s;
+    }
+
+    @keyframes subir {
+      from { opacity: 0; transform: translateY(22px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .scroll-cue {
+      margin-top: 3.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--lavanda);
+      font-size: 0.8rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      opacity: 0.6;
+      animation: subir 1s ease forwards 1s, flotar 2.8s ease-in-out infinite 2s;
+    }
+    .scroll-cue svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--lavanda);
+    }
+
+    @keyframes flotar {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(8px); }
+    }
+
+    /* ===== TÍTULO DE SECCIÓN ===== */
+    .seccion-titulo {
+      text-align: center;
+      padding: 0 1.5rem;
+      margin-bottom: 3.5rem;
+    }
+    .seccion-titulo .eyebrow {
+      font-family: 'Caveat', cursive;
+      color: var(--rosa);
+      font-size: 1.6rem;
+      display: block;
+      margin-bottom: 0.2rem;
+    }
+    .seccion-titulo h2 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      color: var(--crema);
+      letter-spacing: -0.02em;
+    }
+    .seccion-titulo h2 span {
+      background: linear-gradient(120deg, var(--lavanda), var(--rosa));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* ===== ÁLBUM ===== */
+    .album {
+      padding: 5rem 1.25rem 6rem;
+      background: linear-gradient(180deg, var(--violeta-oscuro), var(--violeta-profundo) 40%, var(--violeta-oscuro));
+    }
+
+    .album-grid {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      gap: 3rem 2rem;
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .polaroid {
+      background: var(--crema);
+      padding: 0.8rem 0.8rem 2.6rem;
+      border-radius: 6px;
+      box-shadow: var(--sombra-suave);
+      transform: rotate(var(--r, -2deg));
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s ease;
+      position: relative;
+    }
+    .polaroid:hover {
+      transform: rotate(0deg) scale(1.04);
+      box-shadow: var(--sombra-fuerte);
+      z-index: 5;
+    }
+
+    .polaroid:nth-child(4n+1) { --r: -3.5deg; }
+    .polaroid:nth-child(4n+2) { --r: 3deg; }
+    .polaroid:nth-child(4n+3) { --r: -2.5deg; }
+    .polaroid:nth-child(4n) { --r: 4.5deg; }
+
+    .polaroid .cinta {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%) rotate(-4deg);
+      width: 64px;
+      height: 22px;
+      background: linear-gradient(180deg, rgba(251, 212, 138, 0.85), rgba(251, 212, 138, 0.4));
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      border-radius: 2px;
+      opacity: 0.9;
+    }
+
+    .polaroid img {
+      width: 100%;
+      aspect-ratio: 4/5;
+      object-fit: cover;
+      display: block;
+      border-radius: 3px;
+      filter: saturate(1.08) contrast(1.02);
+      background: var(--violeta-medio);
+    }
+
+    .polaroid-caption {
+      font-family: 'Caveat', cursive;
+      color: var(--violeta-profundo);
+      font-size: 1.35rem;
+      text-align: center;
+      margin-top: 0.8rem;
+      letter-spacing: 0.02em;
+    }
+
+    @media (max-width: 900px) {
+      .album-grid { grid-template-columns: repeat(2, 1fr); gap: 2.5rem 1.5rem; }
+    }
+    @media (max-width: 520px) {
+      .album-grid { grid-template-columns: 1fr; max-width: 320px; margin: 0 auto; }
+      .polaroid { transform: rotate(0deg) !important; }
+    }
+
+    /* ===== RAZONES (FLIP) ===== */
+    .razones {
+      padding: 5rem 1.25rem 6rem;
+      background: var(--violeta-profundo);
+      background-image: radial-gradient(circle at 20% 30%, rgba(183, 155, 234, 0.06), transparent 60%);
+    }
+
+    .razones-grid {
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.8rem;
+    }
+
+    @media (max-width: 800px) {
+      .razones-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 520px) {
+      .razones-grid { grid-template-columns: 1fr; max-width: 340px; margin: 0 auto; }
+    }
+
+    .flip-card {
+      perspective: 1200px;
+      height: 190px;
+      cursor: pointer;
+    }
+    .flip-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);
+      transform-style: preserve-3d;
+    }
+    .flip-card:hover .flip-inner,
+    .flip-card:focus-within .flip-inner {
+      transform: rotateY(180deg);
+    }
+
+    .flip-front,
+    .flip-back {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1.4rem;
+      border: var(--borde-luz);
+    }
+
+    .flip-front {
+      background: linear-gradient(145deg, var(--violeta-medio), #3d2468);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+    .flip-front .num {
+      font-family: 'Caveat', cursive;
+      font-size: 2.8rem;
+      color: var(--dorado);
+      text-shadow: 0 2px 12px rgba(251, 212, 138, 0.2);
+    }
+
+    .flip-back {
+      background: linear-gradient(145deg, var(--rosa), #a84fd6);
+      color: var(--crema);
+      transform: rotateY(180deg);
+      font-size: 1.05rem;
+      font-weight: 500;
+      line-height: 1.5;
+      padding: 1.2rem;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.15);
+    }
+
+    /* ===== CARTA ===== */
+    .carta-wrap {
+      padding: 5rem 1.5rem 6rem;
+      display: flex;
+      justify-content: center;
+      background: radial-gradient(circle at 50% 0%, rgba(183, 155, 234, 0.1), transparent 70%), var(--violeta-oscuro);
+    }
+
+    .carta {
+      max-width: 660px;
+      width: 100%;
+      background: linear-gradient(165deg, #fcf7ff, #f5edff);
+      color: var(--violeta-profundo);
+      padding: clamp(2rem, 5vw, 3.5rem);
+      border-radius: 20px;
+      box-shadow: var(--sombra-fuerte);
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .carta::before {
+      content: '';
+      position: absolute;
+      inset: 12px;
+      border: 1.5px dashed rgba(91, 58, 142, 0.2);
+      border-radius: 12px;
+      pointer-events: none;
+    }
+
+    .carta h3 {
+      font-family: 'Caveat', cursive;
+      font-size: 2.6rem;
+      color: var(--violeta-medio);
+      margin-bottom: 1.2rem;
+      letter-spacing: 0.02em;
+    }
+    .carta p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0 0 1.2rem;
+      color: #2a1a47;
+    }
+    .carta .firma {
+      font-family: 'Caveat', cursive;
+      font-size: 2rem;
+      text-align: right;
+      color: var(--rosa);
+      margin-top: 1.8rem;
+      font-weight: 700;
+    }
+
+    /* ===== CIERRE / BOTÓN ===== */
+    .cierre {
+      min-height: 70svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 1.8rem;
+      padding: 5rem 1.5rem 6rem;
+      background: linear-gradient(180deg, var(--violeta-oscuro), #0f081f);
+      position: relative;
+    }
+    .cierre::before {
+      content: '✦';
+      position: absolute;
+      top: 10%;
+      left: 10%;
+      font-size: 3rem;
+      color: var(--lavanda);
+      opacity: 0.06;
+    }
+    .cierre::after {
+      content: '✦';
+      position: absolute;
+      bottom: 15%;
+      right: 10%;
+      font-size: 4rem;
+      color: var(--rosa);
+      opacity: 0.06;
+    }
+
+    .cierre h2 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      max-width: 30rem;
+      font-weight: 700;
+    }
+    .cierre h2 span {
+      background: linear-gradient(120deg, var(--lavanda), var(--dorado));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    #boton-amor {
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--violeta-oscuro);
+      background: linear-gradient(130deg, var(--dorado), var(--rosa));
+      border: none;
+      padding: 1rem 2.8rem;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 12px 35px rgba(242, 107, 158, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      letter-spacing: 0.02em;
+    }
+    #boton-amor:hover {
+      transform: translateY(-4px) scale(1.04);
+      box-shadow: 0 20px 45px rgba(242, 107, 158, 0.45);
+    }
+    #boton-amor:active {
+      transform: translateY(0) scale(0.96);
+    }
+
+    .mensaje-secreto {
+      font-family: 'Caveat', cursive;
+      font-size: 1.8rem;
+      color: var(--dorado);
+      min-height: 3rem;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      text-shadow: 0 0 30px rgba(251, 212, 138, 0.1);
+    }
+    .mensaje-secreto.mostrar {
+      opacity: 1;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2.5rem 1.5rem 3rem;
+      color: var(--lavanda);
+      font-size: 0.8rem;
+      opacity: 0.5;
+      background: #0f081f;
+      letter-spacing: 0.06em;
+    }
+    footer span {
+      font-family: 'Caveat', cursive;
+      color: var(--rosa);
+      opacity: 0.8;
+    }
+
+    /* ===== PEQUEÑOS DETALLES ===== */
+    .brillo {
+      background: radial-gradient(circle at 30% 40%, rgba(183, 155, 234, 0.08), transparent 60%);
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="hearts-canvas"></canvas>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <span class="hero-eyebrow script">para la persona que más amo</span>
+  <h1>MI AMOR</h1>
+  <!-- EDITA ESTO: subtítulo personal -->
+  <p class="subtitulo">Esta página nació de un solo pensamiento: quería que supieras, con calma y sin prisa, todo lo que significas para mí.</p>
+  <div class="scroll-cue">
+    <span>desliza</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 4v16m0 0l-6-6m6 6l6-6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</section>
+
+<div class="costura"><span class="linea"></span>♥<span class="linea"></span></div>
+
+<!-- ================= ÁLBUM ================= -->
+<section class="album">
+  <div class="seccion-titulo reveal">
+    <span class="eyebrow script">nuestro pequeño museo</span>
+    <h2>Cada foto, un <span>motivo</span> para sonreír</h2>
+  </div>
+
+  <div class="album-grid">
+    <!-- EDITA ESTO: descripciones de cada foto -->
+    <figure class="polaroid reveal">
+      <div class="cinta"></div>
+      <img src="imagenes/foto1.jpeg" alt="MI AMOR de pequeña" loading="lazy">
+      <figcaption class="polaroid-caption">traviesa desde siempre</figcaption>
+    </figure>
+    <figure class="polaroid reveal">
+      <div class="cinta"></div>
+      <img src="imagenes/foto2.jpeg" alt="MI AMOR sonriendo" loading="lazy">
+      <figcaption class="polaroid-caption">esa sonrisa que me desarma</figcaption>
+    </figure>
+    <figure class="polaroid reveal">
+      <div class="cinta"></div>
+      <img src="imagenes/foto3.jpeg" alt="MI AMOR con lentes" loading="lazy">
+      <figcaption class="polaroid-caption">mi persona favorita</figcaption>
+    </figure>
+    <figure class="polaroid reveal">
+      <div class="cinta"></div>
+      <img src="imagenes/foto4.jpeg" alt="MI AMOR" loading="lazy">
+      <figcaption class="polaroid-caption">la mejor compañía</figcaption>
+    </figure>
+    <figure class="polaroid reveal">
+      <div class="cinta"></div>
+      <img src="imagenes/foto5.jpeg" alt="MI AMOR" loading="lazy">
+      <figcaption class="polaroid-caption">contigo el tiempo vuela</figcaption>
+    </figure>
+    <figure class="polaroid reveal">
+      <div class="cinta"></div>
+      <img src="imagenes/foto6.jpeg" alt="MI AMOR arreglada" loading="lazy">
+      <figcaption class="polaroid-caption">lista para brillar</figcaption>
+    </figure>
+    <figure class="polaroid reveal">
+      <div class="cinta"></div>
+      <img src="imagenes/foto7.jpeg" alt="MI AMOR" loading="lazy">
+      <figcaption class="polaroid-caption">simplemente tú</figcaption>
+    </figure>
+    <figure class="polaroid reveal">
+      <div class="cinta"></div>
+      <img src="imagenes/foto8.jpeg" alt="MI AMOR" loading="lazy">
+      <figcaption class="polaroid-caption">mi razón para sonreír</figcaption>
+    </figure>
+  </div>
+</section>
+
+<div class="costura"><span class="linea"></span>♥<span class="linea"></span></div>
+
+<!-- ================= RAZONES ================= -->
+<section class="razones">
+  <div class="seccion-titulo reveal">
+    <span class="eyebrow script">toca cada tarjeta</span>
+    <h2>Razones para <span>amarte</span> (solo algunas)</h2>
+  </div>
+
+  <div class="razones-grid">
+    <!-- EDITA ESTO: cambia estas 6 razones -->
+    <div class="flip-card reveal" tabindex="0">
+      <div class="flip-inner">
+        <div class="flip-front"><span class="num">01</span></div>
+        <div class="flip-back">Por tu risa, que arregla hasta mis peores días.</div>
+      </div>
+    </div>
+    <div class="flip-card reveal" tabindex="0">
+      <div class="flip-inner">
+        <div class="flip-front"><span class="num">02</span></div>
+        <div class="flip-back">Porque me escuchas de verdad, no solo esperas tu turno para hablar.</div>
+      </div>
+    </div>
+    <div class="flip-card reveal" tabindex="0">
+      <div class="flip-inner">
+        <div class="flip-front"><span class="num">03</span></div>
+        <div class="flip-back">Por cómo cuidas a las personas que quieres, sin que nadie te lo pida.</div>
+      </div>
+    </div>
+    <div class="flip-card reveal" tabindex="0">
+      <div class="flip-inner">
+        <div class="flip-front"><span class="num">04</span></div>
+        <div class="flip-back">Porque contigo hasta lo aburrido se vuelve mi plan favorito.</div>
+      </div>
+    </div>
+    <div class="flip-card reveal" tabindex="0">
+      <div class="flip-inner">
+        <div class="flip-front"><span class="num">05</span></div>
+        <div class="flip-back">Por tu forma de soñar en grande y contagiármelo.</div>
+      </div>
+    </div>
+    <div class="flip-card reveal" tabindex="0">
+      <div class="flip-inner">
+        <div class="flip-front"><span class="num">06</span></div>
+        <div class="flip-back">Porque simplemente eres tú, y eso ya es todo lo que quiero.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CARTA ================= -->
+<section class="carta-wrap">
+  <article class="carta reveal">
+    <h3>Para ti</h3>
+    <!-- EDITA ESTO: escribe tu propia carta -->
+    <p>No sé bien cómo poner en palabras lo que siento, pero quería intentarlo. Desde que llegaste, las cosas simples empezaron a saber mejor: una llamada, un mensaje a mitad del día, un plan sin planear nada.</p>
+    <p>Gracias por quedarte en los días difíciles y por celebrar conmigo los buenos. Gracias por ser mi lugar seguro y, al mismo tiempo, mis ganas de crecer.</p>
+    <p>Esta página es pequeña comparada con todo lo que siento, pero espero que cada foto y cada palabra te recuerden algo: <strong>te amo</strong>, hoy y todos los días que vengan.</p>
+    <p class="firma">— tuyo, siempre</p>
+  </article>
+</section>
+
+<!-- ================= CIERRE ================= -->
+<section class="cierre">
+  <h2 class="script">¿Lista para un <span>secreto</span> más?</h2>
+  <button id="boton-amor" type="button">Presiona aquí</button>
+  <!-- EDITA ESTO: mensaje secreto -->
+  <p class="mensaje-secreto" id="mensaje-secreto">Te amo más de lo que estas letras pueden mostrar. ♥</p>
+</section>
+
+<footer>
+  hecho con amor, para <span>MI AMOR</span>
+</footer>
+
+<script>
+  (function() {
+    // ===== REVELAR AL SCROLL =====
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -30px 0px' });
+    reveals.forEach(el => observer.observe(el));
+
+    // ===== BOTÓN SECRETO =====
+    const boton = document.getElementById('boton-amor');
+    const msg = document.getElementById('mensaje-secreto');
+    boton.addEventListener('click', function() {
+      msg.classList.add('mostrar');
+      lanzarCorazones(22);
+    });
+
+    // ===== CORAZONES FLOTANTES (CANVAS) =====
+    const canvas = document.getElementById('hearts-canvas');
+    const ctx = canvas.getContext('2d');
+    let w, h, particles = [];
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function resize() {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    function crearParticula(x, y, burst) {
+      return {
+        x: x !== undefined ? x : Math.random() * w,
+        y: y !== undefined ? y : h + 20,
+        s: 7 + Math.random() * 12,
+        vy: burst ? -(1.8 + Math.random() * 2.5) : -(0.3 + Math.random() * 0.5),
+        vx: burst ? (Math.random() - 0.5) * 2.8 : (Math.random() - 0.5) * 0.3,
+        op: 0.2 + Math.random() * 0.4,
+        color: Math.random() > 0.5 ? '183,155,234' : '242,107,158',
+        life: 0,
+        maxLife: burst ? 100 + Math.random() * 50 : 700 + Math.random() * 500
+      };
+    }
+
+    for (let i = 0; i < 28; i++) {
+      particles.push(crearParticula(undefined, Math.random() * h, false));
+    }
+
+    function drawHeart(x, y, size, color, op) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.scale(size / 18, size / 18);
+      ctx.beginPath();
+      ctx.moveTo(0, 4);
+      ctx.bezierCurveTo(0, -2, -8, -2, -8, 4);
+      ctx.bezierCurveTo(-8, 10, 0, 13, 0, 17);
+      ctx.bezierCurveTo(0, 13, 8, 10, 8, 4);
+      ctx.bezierCurveTo(8, -2, 0, -2, 0, 4);
+      ctx.fillStyle = 'rgba(' + color + ',' + op + ')';
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function loop() {
+      ctx.clearRect(0, 0, w, h);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life++;
+        const lifeRatio = Math.max(0, 1 - p.life / p.maxLife);
+        drawHeart(p.x, p.y, p.s, p.color, p.op * lifeRatio);
+      });
+      particles = particles.filter(p => p.life < p.maxLife && p.y > -40);
+      while (particles.length < 28) {
+        particles.push(crearParticula(undefined, h + 30 + Math.random() * 40, false));
+      }
+      if (!prefersReduced) requestAnimationFrame(loop);
+    }
+
+    function lanzarCorazones(n) {
+      const rect = boton.getBoundingClientRect();
+      for (let i = 0; i < n; i++) {
+        particles.push(crearParticula(
+          rect.left + rect.width / 2 + (Math.random() - 0.5) * 30,
+          rect.top + (Math.random() - 0.5) * 10,
+          true
+        ));
+      }
+      if (prefersReduced) {
+        ctx.clearRect(0, 0, w, h);
+        particles.forEach(p => drawHeart(p.x, p.y, p.s, p.color, p.op));
+      }
+    }
+
+    if (!prefersReduced) loop();
+    else ctx.clearRect(0, 0, w, h);
+
+    // ===== TOQUE EN MÓVIL PARA FLIP =====
+    document.querySelectorAll('.flip-card').forEach(card => {
+      card.addEventListener('click', function(e) {
+        // si está en móvil y no se ha hecho hover, toggle class
+        if (window.innerWidth <= 800) {
+          const inner = this.querySelector('.flip-inner');
+          // si ya tiene la clase flipped, la quitamos; si no, la ponemos
+          if (inner.style.transform === 'rotateY(180deg)') {
+            inner.style.transform = 'rotateY(0deg)';
+          } else {
+            inner.style.transform = 'rotateY(180deg)';
+          }
+        }
+      });
+    });
+
+    // restablecer flips al salir del hover en móvil (opcional)
+    document.querySelectorAll('.flip-card').forEach(card => {
+      card.addEventListener('mouseleave', function() {
+        if (window.innerWidth <= 800) {
+          const inner = this.querySelector('.flip-inner');
+          // no lo forzamos a 0 para que el usuario decida, pero si queremos:
+          // inner.style.transform = 'rotateY(0deg)';
+        }
+      });
+    });
+
+  })();
+</script>
+
+</body>
+</html>
