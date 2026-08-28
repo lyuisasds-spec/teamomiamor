@@ -1,0 +1,21 @@
+name: Notificar actualización por Telegram
+
+on:
+  push:
+    branches:
+      - main  # Cambia a "master" si tu rama principal se llama así
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enviar mensaje a Telegram
+        run: |
+          MESSAGE="Pagina actualizada hoy amor, te amoo 💗"
+          BOT_TOKEN="${{ secrets.TELEGRAM_BOT_TOKEN }}"
+
+          for CHAT_ID in 8617899274 6910816114; do
+            curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+              -d chat_id="${CHAT_ID}" \
+              -d text="${MESSAGE}"
+          done
