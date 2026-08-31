@@ -3,7 +3,9 @@ name: Notificar actualización por Telegram
 on:
   push:
     branches:
-      - main  # Cambia a "master" si tu rama principal se llama así
+      - main
+    paths:
+      - 'index.html'
 
 jobs:
   notify:
