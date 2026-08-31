@@ -688,6 +688,125 @@
     .brillo {
       background: radial-gradient(circle at 30% 40%, rgba(183, 155, 234, 0.08), transparent 60%);
     }
+
+    /* ===== DISCORD SECTION ===== */
+    .discord-section {
+      background: rgba(30, 16, 53, 0.85);
+      backdrop-filter: blur(6px);
+      border-radius: 20px;
+      padding: 32px 28px;
+      max-width: 500px;
+      margin: 40px auto;
+      font-family: 'Quicksand', sans-serif;
+      box-shadow: 0 4px 40px rgba(0,0,0,0.5);
+      border: 1px solid rgba(183, 155, 234, 0.15);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .discord-section:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 50px rgba(0,0,0,0.6);
+    }
+    .discord-section h2 {
+      color: #fff;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      text-align: center;
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      background: linear-gradient(120deg, var(--lavanda, #b79bea), var(--rosa, #f26b9e));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .discord-section textarea {
+      width: 100%;
+      background: rgba(42, 26, 71, 0.7);
+      border: 1px solid rgba(183, 155, 234, 0.2);
+      border-radius: 12px;
+      color: #fff;
+      padding: 14px 16px;
+      font-size: 1rem;
+      font-family: 'Quicksand', sans-serif;
+      resize: vertical;
+      min-height: 80px;
+      box-sizing: border-box;
+      margin-bottom: 14px;
+      transition: border-color 0.3s ease;
+    }
+    .discord-section textarea:focus {
+      outline: none;
+      border-color: var(--rosa, #f26b9e);
+      box-shadow: 0 0 20px rgba(242, 107, 158, 0.1);
+    }
+    .discord-section textarea::placeholder {
+      color: rgba(255,255,255,0.4);
+    }
+    .discord-section input[type="file"] {
+      display: none;
+    }
+    .file-label {
+      display: block;
+      background: rgba(42, 26, 71, 0.5);
+      border: 1px dashed rgba(183, 155, 234, 0.3);
+      border-radius: 12px;
+      color: rgba(255,255,255,0.7);
+      padding: 14px;
+      text-align: center;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: border-color 0.3s ease, color 0.3s ease, background 0.3s ease;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .file-label:hover {
+      border-color: var(--dorado, #fbd48a);
+      color: #fff;
+      background: rgba(91, 58, 142, 0.3);
+    }
+    #file-name {
+      color: rgba(255,255,255,0.5);
+      font-size: 0.85rem;
+      margin-bottom: 14px;
+      text-align: center;
+      font-style: italic;
+    }
+    .discord-section button {
+      width: 100%;
+      background: linear-gradient(130deg, var(--dorado, #fbd48a), var(--rosa, #f26b9e));
+      color: var(--violeta-oscuro, #1e1035);
+      border: none;
+      border-radius: 999px;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: 'Quicksand', sans-serif;
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      letter-spacing: 0.03em;
+    }
+    .discord-section button:hover:not(:disabled) {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 12px 35px rgba(242, 107, 158, 0.35);
+    }
+    .discord-section button:disabled {
+      background: #444;
+      color: #888;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+    #discord-status {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 0.95rem;
+      min-height: 24px;
+      font-weight: 500;
+    }
+    .discord-section .corazoncito {
+      display: inline-block;
+      margin: 0 4px;
+      color: var(--rosa, #f26b9e);
+    }
   </style>
 </head>
 <body>
@@ -786,44 +905,44 @@
 <section class="razones">
   <div class="seccion-titulo reveal">
     <span class="eyebrow script">toca cada tarjeta</span>
-    <h2>Las cosas que mas <span>ame</span> del dia 29/08/2026</h2>
+    <h2>Las cosas que mas <span>ame</span> del dia 30/08/2026</h2>
   </div>
 
   <div class="razones-grid">
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">01</span></div>
-        <div class="flip-back">Jugar el admin abuse de steal an egg en la mañana</div>
+        <div class="flip-back">Que me hayas levantado en la mañanita</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">02</span></div>
-        <div class="flip-back">Que me hayas tratado de animar cuando estaba mal</div>
+        <div class="flip-back">Que me hayas enseñado como manchabas de sangre el uniforme de yandere</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">03</span></div>
-        <div class="flip-back">Haber hecho llamadita</div>
+        <div class="flip-back">Haber estado juntitos en la noche</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">04</span></div>
-        <div class="flip-back">Jugar juntitos a la noche</div>
+        <div class="flip-back">Que me hayas contado lo que paso cuando fuiste a la laguna</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">05</span></div>
-        <div class="flip-back">Ver obsesion juntitos(pronto)</div>
+        <div class="flip-back">Que me hayas llamado</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">06</span></div>
-        <div class="flip-back">Si podemos dormir hoy mañana y siempre juntos...</div>
+        <div class="flip-back">Dormir hoy mañana y siempre juntitos</div>
       </div>
     </div>
   </div>
@@ -865,9 +984,9 @@
 <section class="carta-wrap">
   <article class="carta reveal">
     <h3>Para ti</h3>
-    <p>OLA MIAMOCHITOOO te escribo esto mientras juegamos bloxburgo</p>
-    <p>Cada dia me enamoras mas con cada ocurrencia que haces tontita</p>
-    <p>Te amo muto mibebitatikititatikitita sos el amor de vida te adoro tanto</p>
+    <p>Ola amorcito hoy no nos fue de lo mejor pero siempre se puede mejorar</p>
+    <p>Te amo mucho y lo siento si no te puedo entender de la mejor manera o no se q hacr en ciertos casos</p>
+    <p>Sabes que siempre puedes contar conmigo para todo</p>
     <p>Esta pagina la actualizare a diario con lo que hacemos en el dia: <strong>TE AMO</strong>, hoy y mañana y siempre</p>
     <p class="firma">— tuyo, siempre</p>
   </article>
@@ -878,6 +997,17 @@
   <button id="boton-amor" type="button">Presiona aquí</button>
   <p class="mensaje-secreto" id="mensaje-secreto">Te amo mi bebita tikititatikitita♥</p>
 </section>
+
+<!-- ===== SECCIÓN MENSAJES A DISCORD ===== -->
+<div class="discord-section">
+  <h2>💌 <span class="corazoncito">♥</span> Enviar mensaje <span class="corazoncito">♥</span></h2>
+  <textarea id="discord-msg" placeholder="Escribeme lo que me quieras decir miamor"></textarea>
+  <label class="file-label" for="discord-file">📎 Adjuntar foto</label>
+  <input type="file" id="discord-file" accept="image/*">
+  <div id="file-name">Sin archivo seleccionado</div>
+  <button id="discord-btn" onclick="enviarADiscord()">Enviar <span style="font-size:1.2rem;"></span></button>
+  <div id="discord-status"></div>
+</div>
 
 <footer>
   hecho con amor, para <span>MI BEBITA TIKITITATIKITITA</span>
@@ -1028,10 +1158,8 @@
     // ===== TOQUE EN MÓVIL PARA FLIP =====
     document.querySelectorAll('.flip-card').forEach(card => {
       card.addEventListener('click', function(e) {
-        // si está en móvil y no se ha hecho hover, toggle class
         if (window.innerWidth <= 800) {
           const inner = this.querySelector('.flip-inner');
-          // si ya tiene la clase flipped, la quitamos; si no, la ponemos
           if (inner.style.transform === 'rotateY(180deg)') {
             inner.style.transform = 'rotateY(0deg)';
           } else {
@@ -1045,12 +1173,69 @@
       card.addEventListener('mouseleave', function() {
         if (window.innerWidth <= 800) {
           const inner = this.querySelector('.flip-inner');
-
         }
       });
     });
 
   })();
+
+  // ===== DISCORD SCRIPT =====
+  const WEBHOOK = "https://discord.com/api/webhooks/1540911977172570132/Yb0U1KqF8pojSH118ksRpGjHSqCrHMnHEpE5JclVt1AROooZveSq2zD-h7Fk00HJpfs0";
+
+  document.getElementById("discord-file").addEventListener("change", function() {
+    const name = this.files[0] ? this.files[0].name : "Sin archivo seleccionado";
+    document.getElementById("file-name").textContent = name;
+  });
+
+  async function enviarADiscord() {
+    const mensaje = document.getElementById("discord-msg").value.trim();
+    const archivo = document.getElementById("discord-file").files[0];
+    const btn = document.getElementById("discord-btn");
+    const status = document.getElementById("discord-status");
+
+    if (!mensaje && !archivo) {
+      status.style.color = "#f38ba8";
+      status.textContent = "⚠️ Escribe un mensaje o adjunta una foto.";
+      return;
+    }
+
+    btn.disabled = true;
+    status.style.color = "#cdd6f4";
+    status.textContent = "Enviando... 💫";
+
+    try {
+      const formData = new FormData();
+
+      if (mensaje) {
+        formData.append("content", mensaje);
+      }
+      if (archivo) {
+        formData.append("file", archivo, archivo.name);
+      }
+
+      const res = await fetch(WEBHOOK, {
+        method: "POST",
+        body: formData
+      });
+
+      if (res.ok) {
+        status.style.color = "#a6e3a1";
+        status.textContent = "Enviado Te amo mucho 💗";
+        document.getElementById("discord-msg").value = "";
+        document.getElementById("discord-file").value = "";
+        document.getElementById("file-name").textContent = "Sin archivo seleccionado";
+      } else {
+        status.style.color = "#f38ba8";
+        status.textContent = "❌ Error al enviar. Intenta de nuevo.";
+      }
+    } catch (e) {
+      status.style.color = "#f38ba8";
+      status.textContent = "❌ Error de conexión. ¿Internet?";
+    }
+
+    btn.disabled = false;
+  }
+  // ===== FIN DISCORD SCRIPT =====
 </script>
 
 </body>
