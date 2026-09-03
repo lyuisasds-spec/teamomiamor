@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,700&family=Caveat:wght@500;700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
-
     * {
       margin: 0;
       padding: 0;
@@ -136,6 +135,52 @@
     @keyframes pulso-musica {
       0%, 100% { box-shadow: 0 8px 24px rgba(242, 107, 158, 0.35); }
       50% { box-shadow: 0 8px 34px rgba(242, 107, 158, 0.65); }
+    }
+
+    .hud-flotante {
+      position: fixed;
+      top: 1.2rem;
+      left: 1.2rem;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: linear-gradient(145deg, var(--violeta-medio), #3d2468);
+      border: var(--borde-luz);
+      border-radius: 999px;
+      padding: 0.55rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--crema);
+      box-shadow: 0 8px 24px rgba(20, 10, 35, 0.4);
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .hud-flotante:hover { transform: translateY(-2px) scale(1.03); }
+    .hud-separador { opacity: 0.4; }
+
+    .amor-toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: linear-gradient(145deg, var(--dorado), var(--rosa));
+      color: var(--violeta-oscuro);
+      font-weight: 700;
+      padding: 0.8rem 1.4rem;
+      border-radius: 999px;
+      box-shadow: 0 12px 30px rgba(242, 107, 158, 0.4);
+      z-index: 100;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      max-width: 90vw;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    .amor-toast.mostrar {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
     .hero {
@@ -473,7 +518,6 @@
       accent-color: var(--rosa);
     }
 
-    /* ===== NOTAS Y AUDIOS ===== */
     .notas {
       padding: 5rem 1.25rem 6rem;
       background: var(--violeta-profundo);
@@ -542,6 +586,377 @@
       fill: var(--rosa);
       filter: drop-shadow(0 4px 10px rgba(242, 107, 158, 0.35));
     }
+
+    .ruleta-section {
+      padding: 5rem 1.5rem 6rem;
+      text-align: center;
+      background: linear-gradient(180deg, var(--violeta-profundo), var(--violeta-oscuro));
+    }
+
+    .xp-panel {
+      max-width: 420px;
+      margin: 0 auto 3rem;
+      background: linear-gradient(145deg, var(--violeta-medio), #3d2468);
+      border: var(--borde-luz);
+      border-radius: 18px;
+      padding: 1.4rem 1.6rem;
+      box-shadow: var(--sombra-suave);
+    }
+    .xp-panel-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--lavanda-suave);
+      margin-bottom: 0.6rem;
+      gap: 0.6rem;
+      text-align: left;
+    }
+    .xp-barra {
+      width: 100%;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(0,0,0,0.25);
+      overflow: hidden;
+    }
+    .xp-barra-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--dorado), var(--rosa));
+      transition: width 0.6s ease;
+    }
+    .xp-recompensa {
+      margin-top: 0.8rem;
+      font-family: 'Caveat', cursive;
+      font-size: 1.2rem;
+      color: var(--dorado);
+      min-height: 1.6rem;
+    }
+
+    .ruleta-wrap {
+      position: relative;
+      width: min(280px, 70vw);
+      margin: 0 auto 1.6rem;
+    }
+    .ruleta-puntero {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-top: 22px solid var(--dorado);
+      z-index: 5;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+    }
+    .ruleta-disco {
+      width: 100%;
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      border: 6px solid var(--dorado);
+      box-shadow: var(--sombra-fuerte);
+      background: conic-gradient(
+        var(--violeta-medio) 0deg 45deg,
+        var(--rosa) 45deg 90deg,
+        var(--lavanda) 90deg 135deg,
+        #3d2468 135deg 180deg,
+        var(--violeta-medio) 180deg 225deg,
+        var(--rosa) 225deg 270deg,
+        var(--lavanda) 270deg 315deg,
+        #3d2468 315deg 360deg
+      );
+      transition: transform 4s cubic-bezier(0.17, 0.89, 0.32, 1.15);
+      position: relative;
+    }
+    .ruleta-disco::after {
+      content: '♥';
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: var(--crema);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    .ruleta-puntos-info {
+      color: var(--lavanda-suave);
+      font-size: 0.95rem;
+      margin-bottom: 1.2rem;
+    }
+    .ruleta-btn {
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      color: var(--violeta-oscuro);
+      background: linear-gradient(130deg, var(--dorado), var(--rosa));
+      border: none;
+      padding: 0.9rem 2.4rem;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 12px 35px rgba(242, 107, 158, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .ruleta-btn:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 20px 45px rgba(242, 107, 158, 0.45);
+    }
+    .ruleta-btn:active { transform: translateY(0) scale(0.96); }
+    .ruleta-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
+    }
+
+    .ruleta-resultado {
+      margin-top: 1.6rem;
+      font-family: 'Caveat', cursive;
+      font-size: 1.6rem;
+      color: var(--dorado);
+      min-height: 2.4rem;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+      max-width: 30rem;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .ruleta-resultado.mostrar { opacity: 1; }
+
+    .ruleta-ayuda {
+      max-width: 32rem;
+      margin: 2rem auto 0;
+      font-size: 0.85rem;
+      color: var(--lavanda);
+      opacity: 0.75;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 480px) {
+      .hud-flotante { font-size: 0.75rem; padding: 0.45rem 0.8rem; }
+    }
+
+    .mapa-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: linear-gradient(180deg, var(--violeta-oscuro), var(--violeta-profundo) 60%, var(--violeta-oscuro));
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+    .mapa-overlay.abierto { display: flex; }
+
+    .mapa-header {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 1.5rem;
+      background: linear-gradient(180deg, rgba(30,16,53,0.95), rgba(30,16,53,0.7));
+      backdrop-filter: blur(6px);
+      border-bottom: var(--borde-luz);
+    }
+    .mapa-header h2 {
+      font-size: 1.5rem;
+      background: linear-gradient(120deg, var(--lavanda), var(--rosa));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .mapa-cerrar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: rgba(255,255,255,0.08);
+      color: var(--crema);
+      font-size: 1.3rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease, transform 0.3s ease;
+    }
+    .mapa-cerrar:hover { background: rgba(255,255,255,0.18); transform: rotate(90deg); }
+
+    .mapa-xp-resumen {
+      max-width: 420px;
+      margin: 1.4rem auto 0;
+      padding: 0 1.5rem;
+    }
+    .mapa-xp-resumen .xp-recompensa {
+      text-align: center;
+    }
+
+    .mapa-camino {
+      position: relative;
+      flex: 1;
+      padding: 3rem 1.5rem 5rem;
+      max-width: 420px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column-reverse;
+      gap: 2.6rem;
+    }
+    .mapa-camino::before {
+      content: '';
+      position: absolute;
+      top: 3rem;
+      bottom: 5rem;
+      left: 50%;
+      width: 3px;
+      background: repeating-linear-gradient(180deg, var(--lavanda) 0 10px, transparent 10px 20px);
+      opacity: 0.25;
+      transform: translateX(-50%);
+      z-index: 0;
+    }
+
+    .nivel-nodo {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      width: fit-content;
+      cursor: pointer;
+    }
+    .nivel-nodo:nth-child(odd) { align-self: flex-start; margin-left: 8%; }
+    .nivel-nodo:nth-child(even) { align-self: flex-end; margin-right: 8%; }
+
+    .nivel-circulo {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 3px solid rgba(255,255,255,0.15);
+    }
+    .nivel-nodo:hover .nivel-circulo { transform: scale(1.08); }
+
+    .nivel-nodo.bloqueado .nivel-circulo {
+      background: linear-gradient(145deg, #3a2c58, #241639);
+      color: var(--lavanda);
+      opacity: 0.6;
+    }
+    .nivel-nodo.desbloqueado .nivel-circulo {
+      background: linear-gradient(145deg, var(--dorado), var(--rosa));
+      color: var(--violeta-oscuro);
+      box-shadow: 0 10px 28px rgba(242, 107, 158, 0.4);
+      border-color: rgba(255,255,255,0.5);
+    }
+    .nivel-nodo.actual .nivel-circulo {
+      animation: pulso-nodo 1.8s ease-in-out infinite;
+    }
+    @keyframes pulso-nodo {
+      0%, 100% { box-shadow: 0 10px 28px rgba(242, 107, 158, 0.4); }
+      50% { box-shadow: 0 10px 40px rgba(242, 107, 158, 0.75); }
+    }
+
+    .nivel-etiqueta {
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--lavanda);
+      opacity: 0.7;
+    }
+
+    .nivel-detalle {
+      max-width: 220px;
+      text-align: center;
+      background: linear-gradient(145deg, var(--violeta-medio), #3d2468);
+      border: var(--borde-luz);
+      border-radius: 14px;
+      padding: 0.9rem 1.1rem;
+      font-family: 'Caveat', cursive;
+      font-size: 1.15rem;
+      color: var(--dorado);
+      box-shadow: var(--sombra-suave);
+      display: none;
+    }
+    .nivel-nodo.mostrar-detalle .nivel-detalle { display: block; }
+
+    .celebracion-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 300;
+      background: rgba(15, 8, 31, 0.85);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .celebracion-overlay.abierto {
+      display: flex;
+    }
+    .celebracion-caja {
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      background: linear-gradient(165deg, #fcf7ff, #f5edff);
+      color: var(--violeta-profundo);
+      border-radius: 24px;
+      padding: 2.4rem 1.8rem;
+      box-shadow: var(--sombra-fuerte);
+      transform: scale(0.7) translateY(30px);
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+    }
+    .celebracion-overlay.abierto .celebracion-caja {
+      transform: scale(1) translateY(0);
+      opacity: 1;
+    }
+    .celebracion-emoji {
+      font-size: 3rem;
+      margin-bottom: 0.6rem;
+      display: block;
+      animation: rebote-emoji 1.2s ease-in-out infinite;
+    }
+    @keyframes rebote-emoji {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .celebracion-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem;
+      color: var(--violeta-medio);
+      margin-bottom: 0.6rem;
+    }
+    .celebracion-nivel {
+      font-family: 'Caveat', cursive;
+      font-size: 1.3rem;
+      color: var(--rosa);
+      margin-bottom: 1rem;
+    }
+    .celebracion-premio {
+      font-size: 1.02rem;
+      line-height: 1.6;
+      color: #2a1a47;
+      margin-bottom: 1.6rem;
+    }
+    .celebracion-btn {
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      color: var(--violeta-oscuro);
+      background: linear-gradient(130deg, var(--dorado), var(--rosa));
+      border: none;
+      padding: 0.8rem 2.2rem;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 12px 30px rgba(242, 107, 158, 0.35);
+      transition: transform 0.3s ease;
+    }
+    .celebracion-btn:hover { transform: translateY(-3px) scale(1.03); }
 
     .carta-wrap {
       padding: 5rem 1.5rem 6rem;
@@ -689,7 +1104,6 @@
       background: radial-gradient(circle at 30% 40%, rgba(183, 155, 234, 0.08), transparent 60%);
     }
 
-    /* ===== DISCORD SECTION ===== */
     .discord-section {
       background: rgba(30, 16, 53, 0.85);
       backdrop-filter: blur(6px);
@@ -807,11 +1221,146 @@
       margin: 0 4px;
       color: var(--rosa, #f26b9e);
     }
+
+    .telegram-section {
+      background: rgba(30, 16, 53, 0.85);
+      backdrop-filter: blur(6px);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 500px;
+      margin: 30px auto;
+      border: 1px solid rgba(183, 155, 234, 0.15);
+      box-shadow: 0 4px 40px rgba(0,0,0,0.3);
+    }
+    .telegram-section h3 {
+      color: #fff;
+      text-align: center;
+      margin-bottom: 8px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+    }
+    .telegram-section .sub {
+      color: var(--lavanda);
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+    .telegram-section .input-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .telegram-section .input-group input {
+      flex: 1;
+      min-width: 180px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(183,155,234,0.2);
+      background: rgba(42,26,71,0.7);
+      color: #fff;
+      font-size: 16px;
+      outline: none;
+      transition: border-color 0.3s ease;
+    }
+    .telegram-section .input-group input:focus {
+      border-color: var(--rosa);
+    }
+    .telegram-section .input-group .btn-vincular {
+      padding: 12px 24px;
+      border-radius: 12px;
+      border: none;
+      background: linear-gradient(130deg, var(--dorado), var(--rosa));
+      color: var(--violeta-oscuro);
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .telegram-section .input-group .btn-vincular:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(242, 107, 158, 0.3);
+    }
+    .telegram-section .input-group .btn-vincular:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .telegram-section .input-group .btn-desvincular {
+      padding: 12px 24px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: transform 0.3s ease;
+      display: none;
+    }
+    .telegram-section .input-group .btn-desvincular:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    .telegram-status {
+      text-align: center;
+      font-size: 0.9rem;
+      min-height: 24px;
+      color: var(--lavanda);
+      margin-top: 8px;
+    }
+    .telegram-section .help-text {
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--lavanda);
+      opacity: 0.5;
+      margin-top: 5px;
+    }
+    .telegram-section .help-text code {
+      background: rgba(0,0,0,0.3);
+      padding: 2px 8px;
+      border-radius: 4px;
+      color: var(--dorado);
+    }
   </style>
 </head>
 <body>
 
 <canvas id="hearts-canvas"></canvas>
+
+<div id="hud-flotante" class="hud-flotante" title="Ir a la ruleta">
+  <span class="hud-corazon">💗</span>
+  <span id="hud-puntos">0</span>
+  <span class="hud-separador">·</span>
+  <span>Nv <span id="hud-nivel">0</span></span>
+</div>
+<div id="amor-toast" class="amor-toast"></div>
+
+<div id="mapa-niveles" class="mapa-overlay">
+  <div class="mapa-header">
+    <h2>Tus niveles</h2>
+    <button class="mapa-cerrar" id="mapa-cerrar" type="button" aria-label="Cerrar">✕</button>
+  </div>
+  <div class="mapa-xp-resumen">
+    <div class="xp-panel-top">
+      <span>Nivel <strong id="mapa-nivel-actual">0</strong></span>
+      <span id="mapa-xp-texto">0 / 60 XP para el siguiente nivel</span>
+    </div>
+    <div class="xp-barra">
+      <div class="xp-barra-fill" id="mapa-barra-fill"></div>
+    </div>
+    <p class="xp-recompensa" id="mapa-recompensa-texto"></p>
+  </div>
+  <div class="mapa-camino" id="mapa-camino"></div>
+</div>
+
+<div id="celebracion-overlay" class="celebracion-overlay">
+  <div class="celebracion-caja">
+    <span class="celebracion-emoji">🎉</span>
+    <p class="celebracion-titulo">¡Felicidades amor!</p>
+    <p class="celebracion-nivel" id="celebracion-nivel-texto"></p>
+    <p class="celebracion-premio" id="celebracion-premio-texto"></p>
+    <button class="celebracion-btn" id="celebracion-cerrar" type="button">Seguir explorando 💗</button>
+  </div>
+</div>
 
 <button id="musica-toggle" type="button" aria-label="Reproducir música de fondo">
   <svg class="icono-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
@@ -905,38 +1454,38 @@
 <section class="razones">
   <div class="seccion-titulo reveal">
     <span class="eyebrow script">toca cada tarjeta</span>
-    <h2>Las cosas que mas <span>ame</span> del dia 02/09/2026</h2>
+    <h2>Las cosas que mas <span>ame</span> del dia 01/09/2026</h2>
   </div>
 
   <div class="razones-grid">
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">01</span></div>
-        <div class="flip-back">Que me hayas levantado con tu llamadita</div>
+        <div class="flip-back">Que te hayas dormido despues de escuchar mi cuentito</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">02</span></div>
-        <div class="flip-back">Que me enseñes como prepaeabas los cokeis y los pancitos</div>
+        <div class="flip-back">Jugar juntitos a mukbang</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">03</span></div>
-        <div class="flip-back">Que te hayas bañado conmigo</div>
+        <div class="flip-back">Que me mostraras como cocinabas el ramencita</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">04</span></div>
-        <div class="flip-back">Haberte visto como te arreflabas rapido</div>
+        <div class="flip-back">Haberme dado mucho amochito</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">05</span></div>
-        <div class="flip-back">Que me hyas contado como te fue</div>
+        <div class="flip-back">Que me hables con esa calidez y amor</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
@@ -955,7 +1504,7 @@
   </div>
   <div class="cancion-player reveal">
     <p class="cancion-info">MILO J - M.A.I</p>
-    <audio controls>
+    <audio id="cancion-audio" controls>
       <source src="https://pdftourl.net/audio/1787420482542-a2041a90-82b4-4a8f-bf1c-66a5a902b887.mp3" type="audio/mpeg">
       Tu navegador no soporta audio.
     </audio>
@@ -981,12 +1530,50 @@
   </div>
 </section>
 
+<div class="costura"><span class="linea"></span>♥<span class="linea"></span></div>
+
+<section class="ruleta-section" id="ruleta">
+  <div class="seccion-titulo reveal">
+    <span class="eyebrow script">SUERTE AMOR</span>
+    <h2>Ruleta<span></span></h2>
+  </div>
+
+  <div class="ruleta-wrap reveal">
+    <div class="ruleta-puntero"></div>
+    <div class="ruleta-disco" id="rueda-disco"></div>
+  </div>
+
+  <p class="ruleta-puntos-info reveal">Tienes <strong id="ruleta-puntos-actual">0</strong> puntos · cada giro cuesta 20</p>
+  <button id="btn-girar" type="button" class="ruleta-btn reveal">Girar la ruleta</button>
+  <p class="ruleta-resultado" id="ruleta-resultado"></p>
+
+  <p class="ruleta-ayuda reveal">Amor aqui podras obtener puntos/xp para subir niveles y girar la ruleta cada premio diario sera diferente puede ser algo que te guste como algo que no... recuerda que es suerte(Se manda lo que te toco al bot asi que ojo) 💗</p>
+</section>
+
+<!-- ===== SECCIÓN VINCULACIÓN TELEGRAM ===== -->
+<section class="telegram-section">
+  <h3>💗 Conectar con Telegram</h3>
+  <p class="sub">Recibe notificaciones de tus premios en Telegram</p>
+  
+  <div style="display: flex; flex-direction: column; gap: 12px;">
+    <div class="input-group">
+      <input type="text" id="telegram-id-input" placeholder="Ej: 8617899274">
+      <button class="btn-vincular" id="vincular-telegram">💗 Vincular</button>
+      <button class="btn-desvincular" id="desvincular-telegram">Desvincular</button>
+    </div>
+    <div class="telegram-status" id="telegram-status"></div>
+    <div class="help-text">
+      💡 Escribe <code>/mi_id</code> en el bot de Telegram para obtener tu ID
+    </div>
+  </div>
+</section>
+
 <section class="carta-wrap">
   <article class="carta reveal">
     <h3>Para ti</h3>
-    <p>OLA MIACMOHITO HEMOCHA PECHOCHA estuvimos muchobjuntitos hoy excepto en la noche pero no paxha nada</p>
-    <p>Me parece muy bueno que no estekosbpeleando tanto y estemos mejor que nunca mi bebita </p>
-    <p>Y que te hayas arreglado con tu mama me parece muy bueno mi bebita</p>
+    <p>OLA MIACMOHITO HEMOCHA PECHOCHA hoy no estuvimos tanto juntitos pero me encanto todo el tiemo que si lo estuvismos</p>
+    <p>Me encanta cuando estamos muybien y nos damos muchos besitos y nos decmos que nos amamos mucho</p>
+    <p>Quiero darte todode mi y poder apoyartre en todo para no verte mal maiamochito</p>
     <p>Esta pagina la actualizare a diario con lo que hacemos en el dia: <strong>TE AMO</strong>, hoy y mañana y siempre</p>
     <p class="firma">— tuyo, siempre</p>
   </article>
@@ -1014,7 +1601,43 @@
 </footer>
 
 <script>
-  (function() {
+// =============================================
+// ===== CONFIGURACIÓN DEL BOT =====
+// =============================================
+const BOT_WEBHOOK_URL = "http://localhost:5000/webhook/premio";
+
+// ===== GUARDAR PREMIO EN EL BOT =====
+async function guardarEnBot(usuarioId, nombre, premio, tipo, nivel = null) {
+    try {
+        const response = await fetch(BOT_WEBHOOK_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                usuario_id: usuarioId,
+                nombre: nombre,
+                premio: premio,
+                tipo: tipo,
+                nivel: nivel
+            })
+        });
+        
+        if (response.ok) {
+            console.log('✅ Guardado en el bot:', premio);
+        } else {
+            console.error('❌ Error al guardar en el bot');
+        }
+    } catch (error) {
+        console.error('❌ Error de conexión con el bot:', error);
+    }
+}
+
+// =============================================
+// ===== CÓDIGO PRINCIPAL =====
+// =============================================
+
+(function() {
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -1031,6 +1654,7 @@
     boton.addEventListener('click', function() {
       msg.classList.add('mostrar');
       lanzarCorazones(22);
+      if (window.amorGanarPuntos) window.amorGanarPuntos(10, 15, 'boton-final');
     });
 
     const musicaBtn = document.getElementById('musica-toggle');
@@ -1169,73 +1793,636 @@
       });
     });
 
-    document.querySelectorAll('.flip-card').forEach(card => {
-      card.addEventListener('mouseleave', function() {
-        if (window.innerWidth <= 800) {
-          const inner = this.querySelector('.flip-inner');
-        }
+})();
+
+// =============================================
+// ===== SISTEMA DE PUNTOS, XP Y RULETA =====
+// =============================================
+
+(function() {
+    const LS_PUNTOS = 'amor_puntos';
+    const LS_XP = 'amor_xp';
+    const LS_LOGROS = 'amor_logros';
+    const LS_RACHA = 'amor_ultima_visita';
+
+    function leer(key, def) {
+      try {
+        const v = localStorage.getItem(key);
+        return v === null ? def : JSON.parse(v);
+      } catch (e) { return def; }
+    }
+    function guardar(key, val) {
+      try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {}
+    }
+
+    let puntos = leer(LS_PUNTOS, 0);
+    let xp = leer(LS_XP, 0);
+    let logros = leer(LS_LOGROS, {});
+
+    // XP acumulado necesario para cada nivel (indice = nivel, 0 = nivel 0)
+    const NIVELES = [0, 140, 250, 400, 600, 1000, 1500, 1700, 2000, 2200, 2500];
+    const RECOMPENSAS_NIVEL = [
+      "",
+      "Felicidades amor!",
+      "Nivel 2: Recompensa : 1 Foto/Video de mi pene",
+      "Nivel 3: Recompensa : Comprarte 2 Squishis a eleccion!",
+      "Nivel 4: Recompensa : 240 robux amor!",
+      "Nivel 5: Recompensa : Vale por 1 dia totalmente juntos 24h",
+      "Nivel 6: Recompensa : +600 puntos",
+      "Nivel 7: Recompensa : Comprarte lo que tu quieras (no te pases alaberga)",
+      "Nivel 8: Recompensa : Cualquier cambio en la pagina el que tu quieras",
+      "Nivel 9: Recompensa : Acceso total a la pc",
+      "Nivel 10 🏆: Recompensa : Video de mi ano"
+    ];
+
+    function nivelActual(xpVal) {
+      let n = 0;
+      for (let i = 0; i < NIVELES.length; i++) {
+        if (xpVal >= NIVELES[i]) n = i;
+      }
+      return n;
+    }
+    function xpParaSiguiente(nivel) {
+      if (nivel >= NIVELES.length - 1) return null;
+      return NIVELES[nivel + 1];
+    }
+
+    const hudPuntos = document.getElementById('hud-puntos');
+    const hudNivel = document.getElementById('hud-nivel');
+
+    function actualizarHUD() {
+      if (hudPuntos) hudPuntos.textContent = puntos;
+      const nivel = nivelActual(xp);
+      if (hudNivel) hudNivel.textContent = nivel;
+      const siguiente = xpParaSiguiente(nivel);
+      const base = NIVELES[nivel];
+
+      const hudBarra = document.getElementById('mapa-barra-fill');
+      if (hudBarra) {
+        hudBarra.style.width = (siguiente === null)
+          ? '100%'
+          : Math.min(100, ((xp - base) / (siguiente - base)) * 100) + '%';
+      }
+
+      const elNivelMapa = document.getElementById('mapa-nivel-actual');
+      const elXpTexto = document.getElementById('mapa-xp-texto');
+      const elRecompensaTexto = document.getElementById('mapa-recompensa-texto');
+      const elPuntosRuleta = document.getElementById('ruleta-puntos-actual');
+
+      if (elNivelMapa) elNivelMapa.textContent = nivel;
+      if (elXpTexto) {
+        elXpTexto.textContent = (siguiente === null)
+          ? 'Nivel máximo alcanzado ✨'
+          : (xp - base) + ' / ' + (siguiente - base) + ' XP para el siguiente nivel';
+      }
+      if (elRecompensaTexto) elRecompensaTexto.textContent = RECOMPENSAS_NIVEL[nivel] || '';
+      if (elPuntosRuleta) elPuntosRuleta.textContent = puntos;
+    }
+
+    function mostrarToast(texto) {
+      const toast = document.getElementById('amor-toast');
+      if (!toast) return;
+      toast.textContent = texto;
+      toast.classList.add('mostrar');
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(() => toast.classList.remove('mostrar'), 3200);
+    }
+
+    function ganarPuntos(pts, xpGanado, logroId) {
+      if (logroId) {
+        if (logros[logroId]) return;
+        logros[logroId] = true;
+        guardar(LS_LOGROS, logros);
+      }
+      const nivelAntes = nivelActual(xp);
+      puntos += pts;
+      xp += xpGanado;
+      guardar(LS_PUNTOS, puntos);
+      guardar(LS_XP, xp);
+      const nivelDespues = nivelActual(xp);
+      actualizarHUD();
+      mostrarToast('+' + pts + ' puntos, +' + xpGanado + ' XP 💗');
+      if (nivelDespues > nivelAntes) {
+        setTimeout(() => {
+          mostrarCelebracion(nivelDespues, RECOMPENSAS_NIVEL[nivelDespues] || '');
+          // Notificar nivel a Telegram
+          notificarNivelTelegram(nivelDespues, RECOMPENSAS_NIVEL[nivelDespues] || '');
+          // Guardar en el bot
+          const usuarioId = obtenerIdUsuario();
+          const nombreUsuario = obtenerNombreUsuario();
+          const textoNivel = `Nivel ${nivelDespues}`;
+          guardarEnBot(usuarioId, nombreUsuario, textoNivel, 'nivel', nivelDespues);
+        }, 900);
+      }
+    }
+
+    window.amorGanarPuntos = ganarPuntos;
+
+    // ---- Mapa de niveles ----
+    function renderizarMapa() {
+      const cont = document.getElementById('mapa-camino');
+      if (!cont) return;
+      cont.innerHTML = '';
+      const nivelHoy = nivelActual(xp);
+      for (let n = 1; n < NIVELES.length; n++) {
+        const desbloqueado = nivelHoy >= n;
+        const esActual = nivelHoy === n;
+        const nodo = document.createElement('div');
+        nodo.className = 'nivel-nodo ' + (desbloqueado ? 'desbloqueado' : 'bloqueado') + (esActual ? ' actual' : '');
+        nodo.innerHTML =
+          '<div class="nivel-circulo">' + (desbloqueado ? n : '?') + '</div>' +
+          '<span class="nivel-etiqueta">Nivel ' + n + '</span>' +
+          '<div class="nivel-detalle">' + (desbloqueado ? RECOMPENSAS_NIVEL[n] : 'Sigue ganando puntos y XP para desbloquear este nivel') + '</div>';
+        nodo.addEventListener('click', function() {
+          this.classList.toggle('mostrar-detalle');
+        });
+        cont.appendChild(nodo);
+      }
+    }
+
+    function abrirMapaNiveles() {
+      renderizarMapa();
+      const overlay = document.getElementById('mapa-niveles');
+      if (overlay) overlay.classList.add('abierto');
+    }
+    function cerrarMapaNiveles() {
+      const overlay = document.getElementById('mapa-niveles');
+      if (overlay) overlay.classList.remove('abierto');
+    }
+    const btnCerrarMapa = document.getElementById('mapa-cerrar');
+    if (btnCerrarMapa) btnCerrarMapa.addEventListener('click', cerrarMapaNiveles);
+
+    // ---- Celebración al subir de nivel ----
+    function mostrarCelebracion(nivel, textoPremio) {
+      const overlay = document.getElementById('celebracion-overlay');
+      const elNivel = document.getElementById('celebracion-nivel-texto');
+      const elPremio = document.getElementById('celebracion-premio-texto');
+      if (!overlay) return;
+      if (elNivel) elNivel.textContent = 'Llegaste al nivel ' + nivel;
+      if (elPremio) elPremio.textContent = textoPremio;
+      overlay.classList.add('abierto');
+    }
+    const btnCerrarCelebracion = document.getElementById('celebracion-cerrar');
+    if (btnCerrarCelebracion) {
+      btnCerrarCelebracion.addEventListener('click', function() {
+        document.getElementById('celebracion-overlay').classList.remove('abierto');
+        renderizarMapa();
       });
+    }
+
+    // ---- HUD clic -> abrir mapa de niveles ----
+    const hud = document.getElementById('hud-flotante');
+    if (hud) {
+      hud.addEventListener('click', abrirMapaNiveles);
+    }
+
+    // ---- Racha diaria ----
+    const hoy = new Date().toDateString();
+    const ultimaVisita = leer(LS_RACHA, null);
+    if (ultimaVisita !== hoy) {
+      guardar(LS_RACHA, hoy);
+      ganarPuntos(5, 10, 'racha-' + hoy);
+    }
+
+    // ---- Álbum completo ----
+    const polaroids = document.querySelectorAll('.polaroid');
+    const vistas = new Set();
+    if (polaroids.length) {
+      const obsAlbum = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            vistas.add(entry.target);
+            if (vistas.size >= polaroids.length) {
+              ganarPuntos(5, 10, 'album-completo');
+              obsAlbum.disconnect();
+            }
+          }
+        });
+      }, { threshold: 0.6 });
+      polaroids.forEach(p => obsAlbum.observe(p));
+    }
+
+    // ---- Todas las tarjetas de razones tocadas ----
+    const flipCards = document.querySelectorAll('.flip-card');
+    const tocadas = new Set();
+    flipCards.forEach((card, i) => {
+      const marcar = () => {
+        tocadas.add(i);
+        if (tocadas.size >= flipCards.length) {
+          ganarPuntos(10, 20, 'razones-completas');
+        }
+      };
+      card.addEventListener('mouseenter', marcar);
+      card.addEventListener('click', marcar);
+      card.addEventListener('focus', marcar);
     });
 
-  })();
-
-  // ===== DISCORD SCRIPT =====
-  const WEBHOOK = "https://discord.com/api/webhooks/1540911977172570132/Yb0U1KqF8pojSH118ksRpGjHSqCrHMnHEpE5JclVt1AROooZveSq2zD-h7Fk00HJpfs0";
-
-  document.getElementById("discord-file").addEventListener("change", function() {
-    const name = this.files[0] ? this.files[0].name : "Sin archivo seleccionado";
-    document.getElementById("file-name").textContent = name;
-  });
-
-  async function enviarADiscord() {
-    const mensaje = document.getElementById("discord-msg").value.trim();
-    const archivo = document.getElementById("discord-file").files[0];
-    const btn = document.getElementById("discord-btn");
-    const status = document.getElementById("discord-status");
-
-    if (!mensaje && !archivo) {
-      status.style.color = "#f38ba8";
-      status.textContent = "⚠️ Escribe un mensaje o adjunta una foto.";
-      return;
-    }
-
-    btn.disabled = true;
-    status.style.color = "#cdd6f4";
-    status.textContent = "Enviando... 💫";
-
-    try {
-      const formData = new FormData();
-
-      if (mensaje) {
-        formData.append("content", mensaje);
-      }
-      if (archivo) {
-        formData.append("file", archivo, archivo.name);
-      }
-
-      const res = await fetch(WEBHOOK, {
-        method: "POST",
-        body: formData
+    // ---- Canción completa ----
+    const audioCancion = document.getElementById('cancion-audio');
+    if (audioCancion) {
+      audioCancion.addEventListener('ended', () => {
+        ganarPuntos(10, 15, 'cancion-completa');
       });
-
-      if (res.ok) {
-        status.style.color = "#a6e3a1";
-        status.textContent = "Enviado Te amo mucho 💗";
-        document.getElementById("discord-msg").value = "";
-        document.getElementById("discord-file").value = "";
-        document.getElementById("file-name").textContent = "Sin archivo seleccionado";
-      } else {
-        status.style.color = "#f38ba8";
-        status.textContent = "❌ Error al enviar. Intenta de nuevo.";
-      }
-    } catch (e) {
-      status.style.color = "#f38ba8";
-      status.textContent = "❌ Error de conexión. ¿Internet?";
     }
 
-    btn.disabled = false;
+    // ---- Ruleta ----
+    const PREMIOS = [
+      "Nada amor, gigi",
+      "Vale porque me preguntes cualqueir cosa",
+      "Vale por una pajita",
+      "Vale por estar 5m callado",
+      "Vale por ver una peli juntos",
+      "Vale por una foto de mi pene en cualquier momento",
+      "Vale por desenojarme 1 vez",
+      ""
+    ];
+    const COSTO_GIRO = 65;
+    const rueda = document.getElementById('rueda-disco');
+    const btnGirar = document.getElementById('btn-girar');
+    const resultadoEl = document.getElementById('ruleta-resultado');
+    let anguloActual = 0;
+    let girando = false;
+
+    if (btnGirar && rueda && resultadoEl) {
+      btnGirar.addEventListener('click', () => {
+        if (girando) return;
+        if (puntos < COSTO_GIRO) {
+          mostrarToast('Te faltan puntos amor💗');
+          return;
+        }
+        girando = true;
+        btnGirar.disabled = true;
+        puntos -= COSTO_GIRO;
+        guardar(LS_PUNTOS, puntos);
+        actualizarHUD();
+
+        const segmentos = PREMIOS.length;
+        const indiceGanador = Math.floor(Math.random() * segmentos);
+        const gradosPorSegmento = 360 / segmentos;
+        const vueltasExtra = 5 * 360;
+        const centroSegmento = indiceGanador * gradosPorSegmento + gradosPorSegmento / 2;
+        const anguloFinal = vueltasExtra - centroSegmento;
+        anguloActual += anguloFinal;
+        rueda.style.transform = 'rotate(' + anguloActual + 'deg)';
+
+        resultadoEl.textContent = '';
+        resultadoEl.classList.remove('mostrar');
+
+        setTimeout(() => {
+          girando = false;
+          btnGirar.disabled = false;
+          const premioObtenido = PREMIOS[indiceGanador];
+          resultadoEl.textContent = '🎉 ' + premioObtenido;
+          resultadoEl.classList.add('mostrar');
+          
+          // Notificar premio a Telegram
+          notificarPremioTelegram(premioObtenido, COSTO_GIRO);
+          
+          // Guardar premio local
+          const usuarioId = obtenerIdUsuario();
+          const nombreUsuario = obtenerNombreUsuario();
+          guardarPremio(usuarioId, nombreUsuario, premioObtenido, 'ruleta');
+          
+          // Guardar en el bot
+          guardarEnBot(usuarioId, nombreUsuario, premioObtenido, 'ruleta');
+          
+        }, 4200);
+      });
+    }
+
+    actualizarHUD();
+
+    // =============================================
+    // ===== SISTEMA DE VINCULACIÓN CON TELEGRAM =====
+    // =============================================
+
+    const BOT_TOKEN = "8946970580:AAF7DxwTCpc7TWCY0nPwwL2rtoEWmD9BZl8";
+    const LS_TELEGRAM_ID = 'usuario_telegram_id';
+    const LS_TELEGRAM_NOMBRE = 'usuario_telegram_nombre';
+    const LS_TELEGRAM_VINCULADO = 'usuario_telegram_vinculado';
+    const LS_PREMIOS = 'amor_premios_usuarios';
+
+    // Funciones de usuario
+    function obtenerIdUsuario() {
+      const telegramId = localStorage.getItem(LS_TELEGRAM_ID);
+      if (telegramId) return telegramId;
+      
+      let id = localStorage.getItem('usuario_id_unico');
+      if (!id) {
+        id = 'usr_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('usuario_id_unico', id);
+      }
+      return id;
+    }
+
+    function obtenerNombreUsuario() {
+      const nombre = localStorage.getItem(LS_TELEGRAM_NOMBRE);
+      if (nombre) return nombre;
+      return 'Usuario ' + obtenerIdUsuario().substr(0, 8);
+    }
+
+    function estaVinculado() {
+      return localStorage.getItem(LS_TELEGRAM_VINCULADO) === 'true';
+    }
+
+    // Guardar premio
+    function guardarPremio(usuarioId, nombreUsuario, premio, tipo) {
+      try {
+        let datos = JSON.parse(localStorage.getItem(LS_PREMIOS) || '{}');
+        if (!datos[usuarioId]) {
+          datos[usuarioId] = {
+            nombre: nombreUsuario,
+            premios: []
+          };
+        }
+        datos[usuarioId].premios.push({
+          premio: premio,
+          tipo: tipo,
+          fecha: new Date().toISOString(),
+          timestamp: Date.now()
+        });
+        localStorage.setItem(LS_PREMIOS, JSON.stringify(datos));
+        return true;
+      } catch (error) {
+        console.error('Error al guardar premio:', error);
+        return false;
+      }
+    }
+
+    // Vincular Telegram
+    async function vincularTelegram() {
+      const input = document.getElementById('telegram-id-input');
+      const status = document.getElementById('telegram-status');
+      const btnVincular = document.getElementById('vincular-telegram');
+      const btnDesvincular = document.getElementById('desvincular-telegram');
+      const telegramId = input.value.trim();
+      
+      if (!telegramId) {
+        status.textContent = '❌ Ingresa tu ID de Telegram';
+        status.style.color = '#f38ba8';
+        return;
+      }
+      
+      if (!/^\d+$/.test(telegramId)) {
+        status.textContent = '❌ El ID debe ser un número';
+        status.style.color = '#f38ba8';
+        return;
+      }
+      
+      status.textContent = '⏳ Verificando...';
+      status.style.color = '#cdd6f4';
+      btnVincular.disabled = true;
+      
+      try {
+        const mensajePrueba = `🔗 <b>¡Vinculación exitosa!</b>
+        
+  ✅ Tu cuenta ha sido vinculada con la página web.
+  🆔 ID: <code>${telegramId}</code>
+  💗 Ahora recibirás notificaciones de tus premios.`;
+        
+        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: telegramId,
+            text: mensajePrueba,
+            parse_mode: 'HTML'
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (data.ok) {
+          localStorage.setItem(LS_TELEGRAM_ID, telegramId);
+          localStorage.setItem(LS_TELEGRAM_NOMBRE, 'Usuario ' + telegramId);
+          localStorage.setItem(LS_TELEGRAM_VINCULADO, 'true');
+          
+          status.textContent = '✅ ¡Vinculado! Revisa Telegram 💗';
+          status.style.color = '#a6e3a1';
+          
+          input.disabled = true;
+          btnVincular.style.display = 'none';
+          btnDesvincular.style.display = 'inline-block';
+          
+          mostrarToast('✅ Cuenta vinculada a Telegram');
+          
+          // Notificar a admins
+          const admins = [8617899274, 6910816114];
+          const msgAdmin = `🔗 <b>Nueva vinculación</b>\n🆔 ID: <code>${telegramId}</code>`;
+          for (const adminId of admins) {
+            try {
+              await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  chat_id: adminId,
+                  text: msgAdmin,
+                  parse_mode: 'HTML'
+                })
+              });
+            } catch (e) {}
+          }
+        } else {
+          status.textContent = '❌ Error: ' + (data.description || 'ID inválido');
+          status.style.color = '#f38ba8';
+        }
+      } catch (error) {
+        status.textContent = '❌ Error de conexión';
+        status.style.color = '#f38ba8';
+      }
+      
+      btnVincular.disabled = false;
+    }
+
+    // Desvincular
+    function desvincularTelegram() {
+      if (!confirm('¿Desvincular cuenta de Telegram?')) return;
+      
+      localStorage.removeItem(LS_TELEGRAM_ID);
+      localStorage.removeItem(LS_TELEGRAM_NOMBRE);
+      localStorage.removeItem(LS_TELEGRAM_VINCULADO);
+      
+      const input = document.getElementById('telegram-id-input');
+      const status = document.getElementById('telegram-status');
+      const btnVincular = document.getElementById('vincular-telegram');
+      const btnDesvincular = document.getElementById('desvincular-telegram');
+      
+      input.disabled = false;
+      input.value = '';
+      btnVincular.style.display = 'inline-block';
+      btnDesvincular.style.display = 'none';
+      status.textContent = '✅ Cuenta desvinculada';
+      status.style.color = '#cdd6f4';
+      
+      mostrarToast('🔄 Cuenta desvinculada');
+    }
+
+    // Enviar notificación a Telegram
+    async function enviarNotificacionTelegram(mensaje) {
+      const chatId = localStorage.getItem(LS_TELEGRAM_ID);
+      if (!chatId) return false;
+      
+      try {
+        const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            chat_id: chatId,
+            text: mensaje,
+            parse_mode: 'HTML'
+          })
+        });
+        return response.ok;
+      } catch (error) {
+        console.error('Error:', error);
+        return false;
+      }
+    }
+
+    // Notificar premio de ruleta
+    async function notificarPremioTelegram(premio, puntosGastados) {
+      if (!estaVinculado()) return;
+      
+      const nombre = obtenerNombreUsuario();
+      const mensaje = `🎰 <b>¡Premio de Ruleta!</b>
+  👤 Usuario: ${nombre}
+  🎁 Premio: ${premio}
+  💎 Puntos gastados: ${puntosGastados}
+  💗 ¡Felicidades!`;
+      
+      await enviarNotificacionTelegram(mensaje);
+      mostrarToast('📨 Notificación enviada a Telegram');
+    }
+
+    // Notificar subida de nivel
+    async function notificarNivelTelegram(nivel, recompensa) {
+      if (!estaVinculado()) return;
+      
+      const nombre = obtenerNombreUsuario();
+      const mensaje = `⬆️ <b>¡Felicidades por subir de nivel amor!</b>
+  👤 Usuario: ${nombre}
+  🏆 Nivel alcanzado: <b>${nivel}</b>
+  🎁 Recompensa: ${recompensa}
+  ✨ ¡Sigue así, campeón! 💗`;
+      
+      await enviarNotificacionTelegram(mensaje);
+      mostrarToast('📨 Notificación enviada a Telegram');
+    }
+
+    // Verificar estado al cargar
+    function verificarEstadoVinculacion() {
+      const input = document.getElementById('telegram-id-input');
+      const status = document.getElementById('telegram-status');
+      const btnVincular = document.getElementById('vincular-telegram');
+      const btnDesvincular = document.getElementById('desvincular-telegram');
+      
+      if (!input) return;
+      
+      const telegramId = localStorage.getItem(LS_TELEGRAM_ID);
+      const vinculado = estaVinculado();
+      
+      if (vinculado && telegramId) {
+        input.value = telegramId;
+        input.disabled = true;
+        btnVincular.style.display = 'none';
+        btnDesvincular.style.display = 'inline-block';
+        status.textContent = '✅ Vinculado a Telegram 💗';
+        status.style.color = '#a6e3a1';
+      }
+    }
+
+    // Inicializar eventos
+    document.addEventListener('DOMContentLoaded', function() {
+      const btnVincular = document.getElementById('vincular-telegram');
+      const btnDesvincular = document.getElementById('desvincular-telegram');
+      const input = document.getElementById('telegram-id-input');
+      
+      if (btnVincular) btnVincular.addEventListener('click', vincularTelegram);
+      if (btnDesvincular) btnDesvincular.addEventListener('click', desvincularTelegram);
+      if (input) {
+        input.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter') vincularTelegram();
+        });
+      }
+      
+      verificarEstadoVinculacion();
+    });
+
+    // Exponer funciones globalmente
+    window.obtenerIdUsuario = obtenerIdUsuario;
+    window.obtenerNombreUsuario = obtenerNombreUsuario;
+    window.estaVinculado = estaVinculado;
+    window.guardarPremio = guardarPremio;
+    window.notificarPremioTelegram = notificarPremioTelegram;
+    window.notificarNivelTelegram = notificarNivelTelegram;
+    window.guardarEnBot = guardarEnBot;
+
+})();
+
+// =============================================
+// ===== DISCORD SCRIPT =====
+// =============================================
+
+const WEBHOOK = "https://discord.com/api/webhooks/1540911977172570132/Yb0U1KqF8pojSH118ksRpGjHSqCrHMnHEpE5JclVt1AROooZveSq2zD-h7Fk00HJpfs0";
+
+document.getElementById("discord-file").addEventListener("change", function() {
+  const name = this.files[0] ? this.files[0].name : "Sin archivo seleccionado";
+  document.getElementById("file-name").textContent = name;
+});
+
+async function enviarADiscord() {
+  const mensaje = document.getElementById("discord-msg").value.trim();
+  const archivo = document.getElementById("discord-file").files[0];
+  const btn = document.getElementById("discord-btn");
+  const status = document.getElementById("discord-status");
+
+  if (!mensaje && !archivo) {
+    status.style.color = "#f38ba8";
+    status.textContent = "⚠️ Escribe un mensaje o adjunta una foto.";
+    return;
   }
-  // ===== FIN DISCORD SCRIPT =====
+
+  btn.disabled = true;
+  status.style.color = "#cdd6f4";
+  status.textContent = "Enviando... 💫";
+
+  try {
+    const formData = new FormData();
+
+    if (mensaje) {
+      formData.append("content", mensaje);
+    }
+    if (archivo) {
+      formData.append("file", archivo, archivo.name);
+    }
+
+    const res = await fetch(WEBHOOK, {
+      method: "POST",
+      body: formData
+    });
+
+    if (res.ok) {
+      status.style.color = "#a6e3a1";
+      status.textContent = "Enviado Te amo mucho 💗";
+      document.getElementById("discord-msg").value = "";
+      document.getElementById("discord-file").value = "";
+      document.getElementById("file-name").textContent = "Sin archivo seleccionado";
+      if (window.amorGanarPuntos) {
+        const hoyMsg = new Date().toDateString();
+        window.amorGanarPuntos(15, 25, 'mensaje-' + hoyMsg);
+      }
+    } else {
+      status.style.color = "#f38ba8";
+      status.textContent = "❌ Error al enviar. Intenta de nuevo.";
+    }
+  } catch (e) {
+    status.style.color = "#f38ba8";
+    status.textContent = "❌ Error de conexión. ¿Internet?";
+  }
+
+  btn.disabled = false;
+}
+
 </script>
 
 </body>
