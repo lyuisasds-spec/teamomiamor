@@ -1458,6 +1458,11 @@ function cerrarMapaNiveles() {
 
 document.getElementById('mapa-cerrar').addEventListener('click', cerrarMapaNiveles);
 document.getElementById('hud-flotante').addEventListener('click', abrirMapaNiveles);
+  // Recargar datos al hacer clic en el HUD
+document.getElementById('hud-flotante').addEventListener('click', async function() {
+    await cargarDatosUsuario();
+    actualizarHUD();
+});
 
 function mostrarCelebracion(nivel, textoPremio) {
     const overlay = document.getElementById('celebracion-overlay');
@@ -1562,8 +1567,28 @@ const resultadoEl = document.getElementById('ruleta-resultado');
 let anguloActual = 0;
 let girando = false;
 
+// ===== RECARGAR DATOS AL VER LA RULETA =====
+const ruletaSection = document.getElementById('ruleta');
+if (ruletaSection) {
+    const observerRuleta = new IntersectionObserver(async (entries) => {
+        for (const entry of entries) {
+            if (entry.isIntersecting) {
+                console.log('🔄 Recargando datos al ver la ruleta...');
+                await cargarDatosUsuario();
+                actualizarHUD();
+                console.log('✅ Giros disponibles:', usuarioData.giros_ruleta);
+            }
+        }
+    }, { threshold: 0.2 });
+    observerRuleta.observe(ruletaSection);
+}
+
 if (btnGirar && rueda && resultadoEl) {
     btnGirar.addEventListener('click', async () => {
+        // ===== RECARGAR DATOS ANTES DE CADA GIRO =====
+        await cargarDatosUsuario();
+        actualizarHUD();
+        
         if (girando) return;
         if (!TELEGRAM_ID) {
             mostrarToast('❌ Primero vincula tu Telegram 💗');
@@ -1572,6 +1597,9 @@ if (btnGirar && rueda && resultadoEl) {
         
         const puntos = usuarioData.puntos || 0;
         const giros = usuarioData.giros_ruleta || 0;
+        
+        console.log('🎰 Giros disponibles:', giros);
+        console.log('💰 Puntos disponibles:', puntos);
         
         if (puntos < COSTO_GIRO) {
             mostrarToast('Te faltan puntos amor 💗');
@@ -1625,7 +1653,6 @@ if (btnGirar && rueda && resultadoEl) {
         }, 4200);
     });
 }
-
 // ---- Botón de amor ----
 const botonAmor = document.getElementById('boton-amor');
 const msgSecreto = document.getElementById('mensaje-secreto');
