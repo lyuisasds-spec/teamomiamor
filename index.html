@@ -1300,12 +1300,12 @@
       <div class="racha-label">días seguidos</div>
       <div class="racha-puntos" id="racha-puntos">+0 puntos hoy</div>
       <div class="racha-progreso">
-        <span style="font-size:0.8rem; color:var(--lavanda); opacity:0.5;">Día <span id="racha-dia-actual">0</span></span>
-        <div class="racha-barra-wrap">
-          <div class="racha-barra-fill" id="racha-barra-fill" style="width: 0%;"></div>
-        </div>
-        <span style="font-size:0.8rem; color:var(--lavanda); opacity:0.5;">Día <span id="racha-dia-siguiente">1</span></span>
-      </div>
+    <span style="font-size:0.8rem; color:var(--lavanda); opacity:0.5;">Día <span id="racha-dia-actual">0</span></span>
+    <div class="racha-barra-wrap">
+        <div class="racha-barra-fill" id="racha-barra-fill" style="width: 0%;"></div>
+    </div>
+    <span style="font-size:0.8rem; color:var(--lavanda); opacity:0.5;">Día <span id="racha-dia-siguiente">7</span></span>
+</div>
       <div class="racha-stats">
         <div class="racha-stat">
           <div class="valor" id="racha-total">0</div>
@@ -1710,14 +1710,15 @@ document.getElementById('celebracion-cerrar').addEventListener('click', function
 
 function actualizarRachas() {
     const racha = usuarioData.racha || 0;
-    const puntosRacha = racha * 5; // 5 puntos por día de racha
+    const puntosRacha = racha * 5;
     
+    // Textos principales
     document.getElementById('racha-dias').textContent = racha;
     document.getElementById('racha-puntos').textContent = `+${puntosRacha} puntos hoy`;
     document.getElementById('racha-total').textContent = racha;
     document.getElementById('racha-puntos-total').textContent = puntosRacha;
     
-    // Nivel de racha
+    // Nivel de racha (0-5)
     let nivelRacha = 0;
     if (racha >= 30) nivelRacha = 5;
     else if (racha >= 20) nivelRacha = 4;
@@ -1730,13 +1731,18 @@ function actualizarRachas() {
     document.getElementById('racha-nivel').textContent = `${emojis[nivelRacha]} Nv ${nivelRacha}`;
     document.getElementById('racha-nivel-badge').textContent = `🔥 Racha Nivel ${nivelRacha}`;
     
-    // Barra de progreso (día actual vs próximo nivel)
-    const diaActual = racha % 7 || 7;
-    const siguienteNivel = Math.min(diaActual + 1, 7);
+    // ===== BARRRA DE PROGRESO (CORREGIDA) =====
+    const diaActual = racha > 0 ? (racha % 7 || 7) : 0;
+    const siguienteNivel = racha > 0 ? (diaActual + 1) : 7;
+    
     document.getElementById('racha-dia-actual').textContent = diaActual;
     document.getElementById('racha-dia-siguiente').textContent = siguienteNivel;
     
-    const progreso = ((diaActual - 1) / 7) * 100;
+    let progreso = 0;
+    if (racha > 0) {
+        progreso = ((diaActual) / 7) * 100;
+        if (progreso > 100) progreso = 100;
+    }
     document.getElementById('racha-barra-fill').style.width = Math.min(progreso, 100) + '%';
 }
 
