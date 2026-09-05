@@ -885,6 +885,8 @@
   <span class="hud-corazon">💗</span>
   <span id="hud-puntos">0</span>
   <span class="hud-separador">·</span>
+  <span>🎰 <span id="hud-giros">0</span></span>
+  <span class="hud-separador">·</span>
   <span>Nv <span id="hud-nivel">0</span></span>
 </div>
 
@@ -1109,7 +1111,7 @@
     <div class="ruleta-puntero"></div>
     <div class="ruleta-disco" id="rueda-disco"></div>
   </div>
-  <p class="ruleta-puntos-info reveal">Tienes <strong id="ruleta-puntos-actual">0</strong> puntos · cada giro cuesta 65</p>
+  <p class="ruleta-puntos-info reveal">Tienes <strong id="ruleta-puntos-actual">0</strong> puntos · <strong id="ruleta-giros-actual">0</strong> giros disponibles · cada giro cuesta 65</p>
   <button id="btn-girar" type="button" class="ruleta-btn reveal">Girar la ruleta</button>
   <p class="ruleta-resultado" id="ruleta-resultado"></p>
   <p class="ruleta-ayuda reveal">Amor aqui podras obtener puntos/xp para subir niveles y girar la ruleta cada premio diario sera diferente puede ser algo que te guste como algo que no... recuerda que es suerte(Se manda lo que te toco al bot asi que ojo) 💗</p>
@@ -1206,6 +1208,9 @@ let usuarioData = {
 
 let datosCargados = false;
 
+// Variables para la tienda (delay en compras)
+let comprando = false;
+
 function obtenerTelegramIdGuardado() {
     return localStorage.getItem(LS_TELEGRAM_ID);
 }
@@ -1284,7 +1289,6 @@ async function guardarDatosUsuario(campos) {
     if (!TELEGRAM_ID) return false;
     try {
         const docRef = db.collection('usuarios').doc(TELEGRAM_ID);
-        // Usar set con merge:true para crear o actualizar
         await docRef.set(campos, { merge: true });
         Object.assign(usuarioData, campos);
         return true;
@@ -1328,7 +1332,9 @@ function xpParaSiguiente(nivel) {
 
 const hudPuntos = document.getElementById('hud-puntos');
 const hudNivel = document.getElementById('hud-nivel');
+const hudGiros = document.getElementById('hud-giros');
 const elPuntosRuleta = document.getElementById('ruleta-puntos-actual');
+const elGirosRuleta = document.getElementById('ruleta-giros-actual');
 const mapaBarra = document.getElementById('mapa-barra-fill');
 const mapaNivelActual = document.getElementById('mapa-nivel-actual');
 const mapaXpTexto = document.getElementById('mapa-xp-texto');
@@ -1338,10 +1344,13 @@ function actualizarHUD() {
     const puntos = usuarioData.puntos || 0;
     const xp = usuarioData.xp || 0;
     const nivel = usuarioData.nivel || 0;
+    const giros = usuarioData.giros_ruleta || 0;
     
     if (hudPuntos) hudPuntos.textContent = puntos;
     if (hudNivel) hudNivel.textContent = nivel;
+    if (hudGiros) hudGiros.textContent = giros;
     if (elPuntosRuleta) elPuntosRuleta.textContent = puntos;
+    if (elGirosRuleta) elGirosRuleta.textContent = giros;
 
     const siguiente = xpParaSiguiente(nivel);
     const base = NIVELES[nivel];
@@ -1374,7 +1383,6 @@ async function ganarPuntos(pts, xpGanado, logroId) {
         return;
     }
     
-    // Primero cargar datos frescos de Firebase para no perder nada
     await cargarDatosUsuario();
     
     if (logroId) {
@@ -1458,7 +1466,8 @@ function cerrarMapaNiveles() {
 
 document.getElementById('mapa-cerrar').addEventListener('click', cerrarMapaNiveles);
 document.getElementById('hud-flotante').addEventListener('click', abrirMapaNiveles);
-  // Recargar datos al hacer clic en el HUD
+
+// Recargar datos al hacer clic en el HUD
 document.getElementById('hud-flotante').addEventListener('click', async function() {
     await cargarDatosUsuario();
     actualizarHUD();
@@ -1485,11 +1494,7 @@ async function verificarRacha() {
     
     if (ultimaVisita !== hoy) {
         localStorage.setItem('amor_ultima_visita', hoy);
-        
-        // Recargar datos de Firebase para tener los puntos actualizados
         await cargarDatosUsuario();
-        
-        // Verificar si ya tiene el logro de hoy en Firebase
         if (!usuarioData.logros || usuarioData.logros['racha-' + hoy] !== hoy) {
             await ganarPuntos(5, 10, 'racha-' + hoy);
         }
@@ -1567,7 +1572,7 @@ const resultadoEl = document.getElementById('ruleta-resultado');
 let anguloActual = 0;
 let girando = false;
 
-// ===== RECARGAR DATOS AL VER LA RULETA =====
+// Recargar datos al ver la ruleta
 const ruletaSection = document.getElementById('ruleta');
 if (ruletaSection) {
     const observerRuleta = new IntersectionObserver(async (entries) => {
@@ -1585,7 +1590,7 @@ if (ruletaSection) {
 
 if (btnGirar && rueda && resultadoEl) {
     btnGirar.addEventListener('click', async () => {
-        // ===== RECARGAR DATOS ANTES DE CADA GIRO =====
+        // Recargar datos antes de cada giro
         await cargarDatosUsuario();
         actualizarHUD();
         
@@ -1601,18 +1606,22 @@ if (btnGirar && rueda && resultadoEl) {
         console.log('🎰 Giros disponibles:', giros);
         console.log('💰 Puntos disponibles:', puntos);
         
-        if (puntos < COSTO_GIRO) {
-            mostrarToast('Te faltan puntos amor 💗');
-            return;
-        }
+        // PRIMERO VERIFICAR GIROS
         if (giros <= 0) {
             mostrarToast('No tienes giros disponibles 🎰');
+            return;
+        }
+        
+        // LUEGO VERIFICAR PUNTOS
+        if (puntos < COSTO_GIRO) {
+            mostrarToast('Te faltan puntos amor 💗');
             return;
         }
 
         girando = true;
         btnGirar.disabled = true;
 
+        // Restar puntos y giros
         const nuevosPuntos = puntos - COSTO_GIRO;
         const nuevosGiros = giros - 1;
         await guardarDatosUsuario({
@@ -1653,6 +1662,7 @@ if (btnGirar && rueda && resultadoEl) {
         }, 4200);
     });
 }
+
 // ---- Botón de amor ----
 const botonAmor = document.getElementById('boton-amor');
 const msgSecreto = document.getElementById('mensaje-secreto');
@@ -1705,7 +1715,6 @@ async function cargarTienda() {
         const grid = document.getElementById('tienda-grid');
         if (!grid) return;
         
-        // ORDENAR productos por ID (1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
         const productos = [];
         snapshot.forEach(doc => {
             const data = doc.data();
@@ -1719,7 +1728,6 @@ async function cargarTienda() {
             });
         });
         
-        // Ordenar por ID numérico
         productos.sort((a, b) => parseInt(a.id) - parseInt(b.id));
         
         grid.innerHTML = '';
@@ -1749,6 +1757,12 @@ async function cargarTienda() {
 }
 
 async function comprarProducto(productoId, precio) {
+    // EVITAR CLICKS MÚLTIPLES
+    if (comprando) {
+        mostrarToast('⏳ Espera a que termine la compra...');
+        return;
+    }
+    
     if (!TELEGRAM_ID) {
         mostrarToast('❌ Primero vincula tu Telegram 💗');
         return;
@@ -1761,20 +1775,21 @@ async function comprarProducto(productoId, precio) {
         return;
     }
     
+    comprando = true;
+    
     try {
         const docRef = db.collection('productos').doc(String(productoId));
         const doc = await docRef.get();
         if (!doc.exists) {
             mostrarToast('❌ Producto no encontrado');
+            comprando = false;
             return;
         }
         const producto = doc.data();
         
-        // Restar puntos
         const nuevosPuntos = puntos - precio;
         await guardarDatosUsuario({ puntos: nuevosPuntos });
         
-        // Guardar compra en el historial
         const compras = usuarioData.compras || [];
         compras.push({
             producto: producto.nombre || 'Producto',
@@ -1794,6 +1809,11 @@ async function comprarProducto(productoId, precio) {
         console.error('❌ Error al comprar:', error);
         mostrarToast('❌ Error al procesar la compra');
     }
+    
+    // DESBLOQUEAR DESPUÉS DE 1.5 SEGUNDOS
+    setTimeout(() => {
+        comprando = false;
+    }, 1500);
 }
 
 // =============================================
@@ -1828,7 +1848,6 @@ async function init() {
     renderizarMapa();
     await verificarRacha();
     
-    // Cargar tienda
     await cargarTienda();
     
     console.log('✅ Todo listo para:', TELEGRAM_ID);
