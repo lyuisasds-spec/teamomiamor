@@ -1598,7 +1598,6 @@ if (ruletaSection) {
 
 if (btnGirar && rueda && resultadoEl) {
     btnGirar.addEventListener('click', async () => {
-        // Recargar datos antes de cada giro
         await cargarDatosUsuario();
         actualizarHUD();
         
@@ -1614,17 +1613,14 @@ if (btnGirar && rueda && resultadoEl) {
         console.log('🎰 Giros disponibles:', giros);
         console.log('💰 Puntos disponibles:', puntos);
         
-        // ===== 1. VERIFICAR SI HAY GIROS DISPONIBLES =====
         let usarGiro = giros > 0;
         let costeEnPuntos = 0;
         
         if (usarGiro) {
-            // USAR GIRO GRATIS
             console.log('🎰 Usando giro gratis');
             const nuevosGiros = giros - 1;
             await guardarDatosUsuario({ giros_ruleta: nuevosGiros });
         } else {
-            // ===== 2. SI NO HAY GIROS, COBRAR 65 PUNTOS =====
             if (puntos < COSTO_GIRO) {
                 mostrarToast(`❌ No tienes giros ni puntos suficientes. Necesitas ${COSTO_GIRO} puntos o tener giros disponibles.`);
                 return;
@@ -1638,7 +1634,6 @@ if (btnGirar && rueda && resultadoEl) {
         
         actualizarHUD();
 
-        // ANIMACIÓN DE LA RULETA
         girando = true;
         btnGirar.disabled = true;
 
@@ -1659,10 +1654,66 @@ if (btnGirar && rueda && resultadoEl) {
             btnGirar.disabled = false;
             const premio = PREMIOS_RULETA[indiceGanador];
             
-            // Mostrar mensaje con el costo
+            // ===== PROCESAR PREMIOS DE PUNTOS/XP =====
+            let puntosExtra = 0;
+            let xpExtra = 0;
+            let mensajeExtra = '';
+            
+            if (premio.includes('+100 puntos')) {
+                puntosExtra = 100;
+                mensajeExtra = ' (+100 pts)';
+            } else if (premio.includes('-50 puntos')) {
+                puntosExtra = -50;
+                mensajeExtra = ' (-50 pts)';
+            } else if (premio.includes('+100xp')) {
+                xpExtra = 100;
+                mensajeExtra = ' (+100 XP)';
+            } else if (premio.includes('-50xp')) {
+                xpExtra = -50;
+                mensajeExtra = ' (-50 XP)';
+            }
+            
+            // Aplicar cambios si hay puntos/XP extra
+            if (puntosExtra !== 0 || xpExtra !== 0) {
+                const nuevosPuntos = (usuarioData.puntos || 0) + puntosExtra;
+                const nuevoXp = (usuarioData.xp || 0) + xpExtra;
+                const nuevoNivel = nivelActual(nuevoXp);
+                const subioNivel = nuevoNivel > usuarioData.nivel;
+                
+                const datosActualizar = {
+                    puntos: nuevosPuntos,
+                    xp: nuevoXp,
+                    nivel: nuevoNivel
+                };
+                
+                if (subioNivel) {
+                    const niveles = usuarioData.niveles_subidos || [];
+                    niveles.push({
+                        nivel: nuevoNivel,
+                        fecha: new Date().toISOString(),
+                        recompensa: RECOMPENSAS_NIVEL[nuevoNivel] || ''
+                    });
+                    datosActualizar.niveles_subidos = niveles;
+                    
+                    setTimeout(() => {
+                        mostrarCelebracion(nuevoNivel, RECOMPENSAS_NIVEL[nuevoNivel] || '');
+                    }, 500);
+                }
+                
+                await guardarDatosUsuario(datosActualizar);
+                actualizarHUD();
+                
+                if (puntosExtra > 0) mostrarToast(`🎉 Ganaste ${puntosExtra} puntos extra!`);
+                if (puntosExtra < 0) mostrarToast(`😅 Perdiste ${Math.abs(puntosExtra)} puntos`);
+                if (xpExtra > 0) mostrarToast(`🎉 Ganaste ${xpExtra} XP extra!`);
+                if (xpExtra < 0) mostrarToast(`😅 Perdiste ${Math.abs(xpExtra)} XP`);
+            }
+            
             let mensajePremio = '🎉 ' + premio;
             if (costeEnPuntos > 0) {
                 mensajePremio += ` (${costeEnPuntos} pts)`;
+            } else if (premio.includes('+') || premio.includes('-')) {
+                mensajePremio += mensajeExtra;
             } else {
                 mensajePremio += ' (giro gratis)';
             }
@@ -1679,6 +1730,8 @@ if (btnGirar && rueda && resultadoEl) {
             await guardarDatosUsuario({ premios: premiosLista });
             
             guardarEnBot(TELEGRAM_ID, 'Bebita', premio, 'ruleta');
+            
+            cargarTienda();
             
         }, 4200);
     });
