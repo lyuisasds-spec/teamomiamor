@@ -1022,37 +1022,37 @@
 <section class="razones">
   <div class="seccion-titulo reveal">
     <span class="eyebrow script">toca cada tarjeta</span>
-    <h2>Las cosas que mas <span>ame</span> del dia 03/09/2026</h2>
+    <h2>Las cosas que mas <span>ame</span> del dia 04/09/2026</h2>
   </div>
   <div class="razones-grid">
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">01</span></div>
-        <div class="flip-back">Haberme levantado con un mensaje tuyo</div>
+        <div class="flip-back">Que me hayas llamado y levantado en la mañna 4 veces seguidas KSJDKJS</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">02</span></div>
-        <div class="flip-back">Haber hablado juntos por la tarde</div>
+        <div class="flip-back">Que me hayas enseñado como te maquillabas y quedabas hermosa</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">03</span></div>
-        <div class="flip-back">Que me mostraras como usabas el nose como se llama pero tenia forma de perfume</div>
+        <div class="flip-back">Que me mostraras las fotos y videos del cumple de dubekick</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">04</span></div>
-        <div class="flip-back">Que me hayas amado</div>
+        <div class="flip-back">Haber hecho llamadita apenas llegaste a tu casa</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">05</span></div>
-        <div class="flip-back">Que me mostraras cuando hacias caca</div>
+        <div class="flip-back">Que me mostraras como te desmaquillabas</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
@@ -1071,9 +1071,9 @@
     <h2>La cancion <span>que mas te gusta</span></h2>
   </div>
   <div class="cancion-player reveal">
-    <p class="cancion-info">MILO J - OLIMPO</p>
+    <p class="cancion-info">MILO J (Prod. Taiu) – RARA VEZ</p>
     <audio id="cancion-audio" controls>
-      <source src="https://www.image2url.com/r2/default/audio/1788491139045-3b98666f-ba20-47f0-8d57-be07dbd18613.mp3" type="audio/mpeg">
+      <source src="https://www.image2url.com/r2/default/audio/1788575721652-89ae3f46-ac3c-469c-be03-2fb9315d192b.mp3" type="audio/mpeg">
       Tu navegador no soporta audio.
     </audio>
   </div>
@@ -1136,9 +1136,9 @@
 <section class="carta-wrap">
   <article class="carta reveal">
     <h3>Para ti</h3>
-    <p>Ola amor ps hoy no estuvimos tan bien pero todo se puede mejorar y tmp estuvimos muy juntos hoy</p>
-    <p>Quisiera que no pelearamos pero obviamente es imposible debido a q es una relacion y normal que lo haya</p>
-    <p>Sin embardo una pelea no me va cambiar el amor que te tengo porque es inigualable mi amor te amo...</p>
+    <p>OLAAA MIAMOCHITOO HOY ME ENCANTO MUCHISISIMO ESTAR JUNTITO A VOS MI BEBITA TIKITTIATIKITA</p>
+    <p>Me gusto mucho verte desmaquillando y que no hayamos peleado tanto hoy me encanta hacerte estas cosas para ti pq se q te gustan</p>
+    <p>Mañana tengo nuevas ideas para agregar asi que ojitooo tontita</p>
     <p>Esta pagina la actualizare a diario con lo que hacemos en el dia: <strong>TE AMO</strong>, hoy y mañana y siempre</p>
     <p class="firma">— tuyo, siempre</p>
   </article>
@@ -1556,14 +1556,22 @@ if (audioCancion) {
 
 // ---- Ruleta ----
 const PREMIOS_RULETA = [
-    "Nada amor, gigi",
+    "Vale por comprar un squishy de queso",
     "Vale porque me preguntes cualquier cosa",
     "Vale por una pajita",
     "Vale por estar 5m callado",
     "Vale por ver una peli juntos",
-    "Vale por una foto de mi pene en cualquier momento",
+    "Vale por chuparte la concha",
     "Vale por desenojarme 1 vez",
-    "Sin premio 😢"
+    "Vale por no usar la pc x 1h",
+    "Vale por 1 dedeada en tu ano",
+    "Vale por mirar la peli que tu quieras",
+    "Vale comprarte una tanga",
+    "Vale por una tematica a eleccion (Cuento)",
+    "Vale por +100 puntos",
+    "Vale por -50 puntos",
+    "Vale por +100xp",
+    "Vale por -50xp"
 ];
 const COSTO_GIRO = 65;
 const rueda = document.getElementById('rueda-disco');
@@ -1600,35 +1608,39 @@ if (btnGirar && rueda && resultadoEl) {
             return;
         }
         
-        const puntos = usuarioData.puntos || 0;
         const giros = usuarioData.giros_ruleta || 0;
+        const puntos = usuarioData.puntos || 0;
         
         console.log('🎰 Giros disponibles:', giros);
         console.log('💰 Puntos disponibles:', puntos);
         
-        // PRIMERO VERIFICAR GIROS
-        if (giros <= 0) {
-            mostrarToast('No tienes giros disponibles 🎰');
-            return;
+        // ===== 1. VERIFICAR SI HAY GIROS DISPONIBLES =====
+        let usarGiro = giros > 0;
+        let costeEnPuntos = 0;
+        
+        if (usarGiro) {
+            // USAR GIRO GRATIS
+            console.log('🎰 Usando giro gratis');
+            const nuevosGiros = giros - 1;
+            await guardarDatosUsuario({ giros_ruleta: nuevosGiros });
+        } else {
+            // ===== 2. SI NO HAY GIROS, COBRAR 65 PUNTOS =====
+            if (puntos < COSTO_GIRO) {
+                mostrarToast(`❌ No tienes giros ni puntos suficientes. Necesitas ${COSTO_GIRO} puntos o tener giros disponibles.`);
+                return;
+            }
+            
+            console.log('💰 Cobrando 65 puntos por el giro');
+            costeEnPuntos = COSTO_GIRO;
+            const nuevosPuntos = puntos - COSTO_GIRO;
+            await guardarDatosUsuario({ puntos: nuevosPuntos });
         }
         
-        // LUEGO VERIFICAR PUNTOS
-        if (puntos < COSTO_GIRO) {
-            mostrarToast('Te faltan puntos amor 💗');
-            return;
-        }
+        actualizarHUD();
 
+        // ANIMACIÓN DE LA RULETA
         girando = true;
         btnGirar.disabled = true;
-
-        // Restar puntos y giros
-        const nuevosPuntos = puntos - COSTO_GIRO;
-        const nuevosGiros = giros - 1;
-        await guardarDatosUsuario({
-            puntos: nuevosPuntos,
-            giros_ruleta: nuevosGiros
-        });
-        actualizarHUD();
 
         const segmentos = PREMIOS_RULETA.length;
         const indiceGanador = Math.floor(Math.random() * segmentos);
@@ -1646,13 +1658,22 @@ if (btnGirar && rueda && resultadoEl) {
             girando = false;
             btnGirar.disabled = false;
             const premio = PREMIOS_RULETA[indiceGanador];
-            resultadoEl.textContent = '🎉 ' + premio;
+            
+            // Mostrar mensaje con el costo
+            let mensajePremio = '🎉 ' + premio;
+            if (costeEnPuntos > 0) {
+                mensajePremio += ` (${costeEnPuntos} pts)`;
+            } else {
+                mensajePremio += ' (giro gratis)';
+            }
+            resultadoEl.textContent = mensajePremio;
             resultadoEl.classList.add('mostrar');
             
             const premiosLista = usuarioData.premios || [];
             premiosLista.push({
                 premio: premio,
                 tipo: 'ruleta',
+                costo: costeEnPuntos > 0 ? `${costeEnPuntos} pts` : 'giro gratis',
                 fecha: new Date().toISOString()
             });
             await guardarDatosUsuario({ premios: premiosLista });
