@@ -1,0 +1,1863 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+  <title>Casino</title>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,700&family=Caveat:wght@500;700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --violeta-oscuro: #1e1035;
+      --violeta-profundo: #2a1a47;
+      --violeta-medio: #5b3a8e;
+      --lavanda: #b79bea;
+      --lavanda-suave: #e9defb;
+      --rosa: #f26b9e;
+      --dorado: #fbd48a;
+      --crema: #fcf7ff;
+      --rojo: #e53935;
+      --rojo-oscuro: #b71c1c;
+      --verde: #43a047;
+      --verde-oscuro: #2e7d32;
+      --negro: #1a1a1a;
+      --sombra: 0 20px 50px rgba(0, 0, 0, 0.5);
+    }
+    html { scroll-behavior: smooth; -webkit-tap-highlight-color: transparent; }
+    body {
+      background:
+        radial-gradient(circle at 20% 20%, rgba(211, 47, 47, 0.12), transparent 55%),
+        radial-gradient(circle at 80% 80%, rgba(46, 125, 50, 0.12), transparent 55%),
+        linear-gradient(160deg, #0f081f, #1a0a1a 50%, #0f081f);
+      color: var(--crema);
+      font-family: 'Quicksand', sans-serif;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    /* ===== HEADER ===== */
+    .casino-header {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.9rem 1.5rem;
+      background: linear-gradient(180deg, rgba(15, 8, 31, 0.98), rgba(15, 8, 31, 0.85));
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(242, 107, 158, 0.3);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+    }
+    .casino-volver {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      padding: 0.5rem 1rem;
+      color: var(--crema);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: 'Quicksand', sans-serif;
+      transition: all 0.3s ease;
+    }
+    .casino-volver:hover { background: var(--violeta-medio); transform: scale(1.05); }
+    .casino-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem; font-weight: 700;
+      background: linear-gradient(120deg, var(--dorado), var(--rosa));
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent;
+    }
+    .casino-user-info { display: flex; gap: 0.5rem; }
+    .casino-user-info .chip {
+      background: linear-gradient(145deg, var(--violeta-medio), #3d2468);
+      border: 1px solid rgba(183, 155, 234, 0.3);
+      border-radius: 999px;
+      padding: 0.4rem 0.9rem;
+      font-weight: 700; font-size: 0.85rem;
+      display: flex; align-items: center; gap: 0.3rem;
+    }
+    .casino-user-info .chip .num { color: var(--dorado); }
+
+    /* ===== HERO ===== */
+    .casino-hero { text-align: center; padding: 2.5rem 1.5rem 1.5rem; }
+    .casino-hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      font-weight: 700;
+      background: linear-gradient(120deg, var(--dorado) 20%, var(--rosa) 50%, #d32f2f 80%);
+      -webkit-background-clip: text; background-clip: text;
+      color: transparent;
+    }
+    .casino-hero .sub {
+      font-family: 'Caveat', cursive;
+      color: var(--dorado); font-size: 1.4rem;
+      margin-top: 0.3rem;
+    }
+
+    /* ===== SELECTOR DE JUEGOS ===== */
+    .juegos-tabs {
+      display: flex; justify-content: center;
+      gap: 0.5rem; flex-wrap: wrap;
+      padding: 0 1rem; margin-bottom: 1.5rem;
+    }
+    .juego-tab {
+      background: rgba(30, 16, 53, 0.85);
+      border: 1px solid rgba(183, 155, 234, 0.25);
+      border-radius: 999px;
+      padding: 0.6rem 1.2rem;
+      color: var(--crema); font-weight: 700; font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Quicksand', sans-serif;
+    }
+    .juego-tab:hover { transform: translateY(-2px); border-color: var(--rosa); }
+    .juego-tab.activo {
+      background: linear-gradient(130deg, var(--dorado), var(--rosa));
+      color: var(--violeta-oscuro); border-color: transparent;
+      box-shadow: 0 8px 25px rgba(242, 107, 158, 0.4);
+    }
+
+    /* ===== SECCIONES DE JUEGO ===== */
+    .juego-seccion {
+      display: none;
+      max-width: 750px;
+      margin: 0 auto 3rem;
+      padding: 0 1rem;
+    }
+    .juego-seccion.activo { display: block; animation: fadeIn 0.4s ease; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .juego-caja {
+      background: linear-gradient(165deg, rgba(30, 16, 53, 0.95), rgba(61, 36, 104, 0.95));
+      border: 1px solid rgba(183, 155, 234, 0.25);
+      border-radius: 24px;
+      padding: 2rem 1.8rem;
+      box-shadow: var(--sombra);
+      text-align: center;
+    }
+    .juego-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.7rem; color: var(--dorado);
+      margin-bottom: 0.3rem;
+    }
+    .juego-sub {
+      font-size: 0.85rem; color: var(--lavanda-suave);
+      opacity: 0.8; margin-bottom: 1.5rem;
+    }
+
+    /* ===== APUESTA ===== */
+    .apuesta-wrap {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.6rem; margin-bottom: 1.2rem; flex-wrap: wrap;
+    }
+    .apuesta-label { color: var(--lavanda-suave); font-size: 0.9rem; }
+    .apuesta-input {
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(183, 155, 234, 0.3);
+      border-radius: 999px;
+      padding: 0.6rem 1rem;
+      color: var(--dorado); font-size: 1rem; font-weight: 700;
+      font-family: 'Quicksand', sans-serif;
+      width: 110px; text-align: center;
+      outline: none; transition: border-color 0.3s ease;
+    }
+    .apuesta-input:focus { border-color: var(--rosa); }
+    .apuesta-btn-mini {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 999px;
+      padding: 0.4rem 0.8rem;
+      color: var(--crema); font-size: 0.75rem; font-weight: 700;
+      cursor: pointer; font-family: 'Quicksand', sans-serif;
+      transition: all 0.3s ease;
+    }
+    .apuesta-btn-mini:hover { background: var(--violeta-medio); transform: scale(1.05); }
+
+    .jugar-btn {
+      background: linear-gradient(130deg, var(--dorado), var(--rosa));
+      border: none; border-radius: 999px;
+      padding: 0.9rem 2.4rem;
+      font-size: 1rem; font-weight: 700;
+      color: var(--violeta-oscuro);
+      cursor: pointer; font-family: 'Quicksand', sans-serif;
+      box-shadow: 0 12px 35px rgba(242, 107, 158, 0.4);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .jugar-btn:hover:not(:disabled) {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: 0 20px 45px rgba(242, 107, 158, 0.6);
+    }
+    .jugar-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .resultado-casino {
+      margin-top: 1rem;
+      font-family: 'Caveat', cursive;
+      font-size: 1.5rem; min-height: 2rem;
+      opacity: 0; transition: opacity 0.4s ease;
+      font-weight: 700;
+    }
+    .resultado-casino.mostrar { opacity: 1; }
+    .resultado-casino.ganar { color: #4caf50; }
+    .resultado-casino.perder { color: #f44336; }
+    .resultado-casino.neutro { color: var(--dorado); }
+
+    /* ===== CLARENCE ROAD ===== */
+    .dificultad-selector {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(183, 155, 234, 0.2);
+      border-radius: 14px;
+      padding: 0.9rem 1rem;
+      margin-bottom: 1.2rem;
+    }
+    .dificultad-top {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-bottom: 0.7rem;
+    }
+    .dificultad-top .label {
+      font-size: 0.8rem; color: var(--lavanda);
+      text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
+    }
+    .dificultad-top .actual {
+      font-family: 'Caveat', cursive;
+      font-size: 1.1rem; color: var(--dorado);
+    }
+    .dificultad-opciones {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.4rem;
+    }
+    .dif-opcion {
+      background: rgba(0, 0, 0, 0.3);
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 0.6rem 0.3rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-family: 'Quicksand', sans-serif;
+      color: var(--crema);
+    }
+    .dif-opcion:hover { transform: translateY(-2px); }
+    .dif-opcion .icono { font-size: 1.2rem; display: block; margin-bottom: 0.2rem; }
+    .dif-opcion .nombre { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+    .dif-opcion .multi { font-size: 0.65rem; opacity: 0.7; display: block; margin-top: 0.2rem; }
+    .dif-opcion.activo { border-color: var(--rosa); background: rgba(242, 107, 158, 0.15); }
+    .dif-opcion[data-dif="facil"].activo { border-color: #4caf50; background: rgba(76, 175, 80, 0.15); }
+    .dif-opcion[data-dif="medio"].activo { border-color: #ffc107; background: rgba(255, 193, 7, 0.15); }
+    .dif-opcion[data-dif="dificil"].activo { border-color: #ff9800; background: rgba(255, 152, 0, 0.15); }
+    .dif-opcion[data-dif="experto"].activo { border-color: #f44336; background: rgba(244, 67, 54, 0.15); }
+
+    /* Multiplicadores de progreso */
+    .multiplicadores-bar {
+      display: flex; gap: 0.3rem; justify-content: flex-start;
+      overflow-x: auto; padding: 0.6rem 0.5rem;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      scrollbar-width: none;
+    }
+    .multiplicadores-bar::-webkit-scrollbar { display: none; }
+    .multi-chip {
+      flex-shrink: 0;
+      padding: 0.4rem 0.7rem;
+      border-radius: 8px;
+      font-size: 0.75rem; font-weight: 700;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--lavanda);
+      transition: all 0.3s ease;
+    }
+    .multi-chip.pasado {
+      background: rgba(76, 175, 80, 0.25);
+      color: #a5d6a7;
+    }
+    .multi-chip.actual {
+      background: linear-gradient(130deg, var(--dorado), var(--rosa));
+      color: var(--violeta-oscuro);
+      transform: scale(1.15);
+      box-shadow: 0 4px 15px rgba(242, 107, 158, 0.5);
+    }
+
+    /* Área de juego Clarence */
+    .clarence-road {
+      position: relative;
+      background: linear-gradient(180deg, #1a1a1a, #2a2a2a);
+      border-radius: 14px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+      padding: 0.8rem 0;
+      border: 2px solid rgba(183, 155, 234, 0.2);
+    }
+    .carretera-fila {
+      position: relative;
+      height: 42px;
+      margin: 3px 0;
+      background: #2a2a2a;
+      border-top: 1px dashed rgba(255, 255, 255, 0.15);
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+      overflow: hidden;
+    }
+    .carretera-fila.actual {
+      background: rgba(242, 107, 158, 0.1);
+      border-color: var(--rosa);
+    }
+    .carretera-fila.meta {
+      background: linear-gradient(90deg, #4caf50, #66bb6a);
+      border: 2px solid var(--dorado);
+      height: 48px;
+    }
+    .fila-info {
+      position: absolute;
+      left: 0.4rem; top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.7rem;
+      color: var(--lavanda);
+      opacity: 0.6;
+      z-index: 5;
+      pointer-events: none;
+    }
+    .fila-multi {
+      position: absolute;
+      right: 0.4rem; top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--dorado);
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    /* Carros CSS */
+    .carro-css {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50px;
+      height: 28px;
+      animation: pasarCarro linear;
+      z-index: 3;
+    }
+    .carro-css.izq { animation-name: pasarCarroIzq; }
+    .carro-css.der { animation-name: pasarCarroDer; }
+    @keyframes pasarCarroDer {
+      from { left: -60px; }
+      to { left: calc(100% + 60px); }
+    }
+    @keyframes pasarCarroIzq {
+      from { right: -60px; transform: translateY(-50%) scaleX(-1); }
+      to { right: calc(100% + 60px); transform: translateY(-50%) scaleX(-1); }
+    }
+    .carro-body {
+      width: 100%; height: 100%;
+      border-radius: 5px 10px 5px 5px;
+      position: relative;
+      box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.3);
+    }
+    .carro-body.rojo { background: linear-gradient(180deg, #ef5350, #b71c1c); }
+    .carro-body.azul { background: linear-gradient(180deg, #42a5f5, #0d47a1); }
+    .carro-body.amarillo { background: linear-gradient(180deg, #ffeb3b, #f9a825); }
+    .carro-body.verde { background: linear-gradient(180deg, #66bb6a, #1b5e20); }
+    .carro-body.morado { background: linear-gradient(180deg, #ab47bc, #4a148c); }
+    .carro-body::before {
+      content: '';
+      position: absolute;
+      top: 3px; left: 8px;
+      width: 14px; height: 10px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 2px;
+    }
+    .carro-body::after {
+      content: '';
+      position: absolute;
+      top: 3px; right: 5px;
+      width: 12px; height: 10px;
+      background: rgba(255, 255, 255, 0.4);
+      border-radius: 2px;
+    }
+    .rueda {
+      position: absolute;
+      bottom: -3px;
+      width: 8px; height: 8px;
+      background: #111;
+      border-radius: 50%;
+      border: 2px solid #333;
+    }
+    .rueda.izq { left: 6px; }
+    .rueda.der { right: 6px; }
+
+    /* Clarence */
+    .clarence-runner {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 44px; height: 38px;
+      z-index: 4;
+      transition: top 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .clarence-runner.atropellado {
+      animation: atropello 0.6s ease;
+    }
+    @keyframes atropello {
+      0% { transform: translateX(-50%) rotate(0deg); }
+      50% { transform: translateX(-50%) rotate(360deg) translateY(-30px); }
+      100% { transform: translateX(-50%) rotate(720deg) translateY(60px); opacity: 0; }
+    }
+
+    /* Clarence (CSS pixel art) */
+    .clarence-body {
+      position: relative;
+      width: 100%; height: 100%;
+    }
+    .clarence-cabeza {
+      position: absolute;
+      top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 26px; height: 20px;
+      background: linear-gradient(180deg, #a8d5a8, #7ab87a);
+      border-radius: 12px 12px 6px 6px;
+      border: 2px solid #4a7a4a;
+      z-index: 2;
+    }
+    .clarence-cabeza::before {
+      content: '';
+      position: absolute;
+      top: 6px; left: 4px;
+      width: 5px; height: 5px;
+      background: #1a1a1a;
+      border-radius: 50%;
+    }
+    .clarence-cabeza::after {
+      content: '';
+      position: absolute;
+      top: 6px; right: 4px;
+      width: 5px; height: 5px;
+      background: #1a1a1a;
+      border-radius: 50%;
+    }
+    .clarence-cuerpo {
+      position: absolute;
+      top: 16px; left: 50%;
+      transform: translateX(-50%);
+      width: 22px; height: 14px;
+      background: linear-gradient(180deg, #a8d5a8, #7ab87a);
+      border-radius: 6px;
+      border: 2px solid #4a7a4a;
+      z-index: 1;
+    }
+    .clarence-pata {
+      position: absolute;
+      bottom: 0;
+      width: 6px; height: 10px;
+      background: #7ab87a;
+      border: 1px solid #4a7a4a;
+      border-radius: 3px;
+    }
+    .clarence-pata.p1 { left: 30%; animation: caminar 0.3s infinite alternate; }
+    .clarence-pata.p2 { right: 30%; animation: caminar 0.3s infinite alternate-reverse; }
+    @keyframes caminar {
+      from { transform: translateY(0); }
+      to { transform: translateY(-3px); }
+    }
+    .clarence-cola {
+      position: absolute;
+      top: 20px; left: -6px;
+      width: 10px; height: 6px;
+      background: #7ab87a;
+      border: 1px solid #4a7a4a;
+      border-radius: 3px;
+      transform: rotate(-20deg);
+    }
+
+    /* Meteorito */
+    .meteorito-css {
+      position: absolute;
+      top: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px; height: 30px;
+      background: radial-gradient(circle at 30% 30%, #ffeb3b, #ff5722 50%, #b71c1c);
+      border-radius: 50%;
+      box-shadow: 0 0 20px #ff5722, 0 0 40px #ff9800;
+      z-index: 10;
+    }
+    .meteorito-css.cayendo {
+      animation: caerMeteorito 1.2s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+    }
+    @keyframes caerMeteorito {
+      0% { top: -40px; transform: translateX(-50%) scale(1); }
+      100% { top: calc(100% - 40px); transform: translateX(-50%) scale(1.5); }
+    }
+    .meteorito-css::before {
+      content: '';
+      position: absolute;
+      top: -20px; left: 50%;
+      transform: translateX(-50%);
+      width: 20px; height: 30px;
+      background: linear-gradient(to top, #ff5722, transparent);
+      border-radius: 50% 50% 0 0;
+      opacity: 0.7;
+    }
+
+    /* Explosión */
+    .explosion {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px; height: 10px;
+      background: radial-gradient(circle, #fff, #ffeb3b, #ff5722);
+      border-radius: 50%;
+      animation: explotar 0.8s ease-out forwards;
+      z-index: 20;
+    }
+    @keyframes explotar {
+      0% { width: 10px; height: 10px; opacity: 1; }
+      100% { width: 200px; height: 200px; opacity: 0; }
+    }
+
+    /* Botones de Clarence */
+    .clarence-botones {
+      display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap;
+    }
+    .btn-avanzar {
+      flex: 1; min-width: 120px;
+      background: linear-gradient(130deg, #4caf50, #2e7d32);
+      border: none; border-radius: 999px;
+      padding: 0.9rem 1.5rem;
+      font-size: 1rem; font-weight: 700;
+      color: white; cursor: pointer;
+      font-family: 'Quicksand', sans-serif;
+      box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+      transition: transform 0.3s ease;
+    }
+    .btn-avanzar:hover:not(:disabled) { transform: translateY(-3px) scale(1.03); }
+    .btn-avanzar:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-retirar {
+      flex: 1; min-width: 120px;
+      background: linear-gradient(130deg, var(--dorado), #ff9800);
+      border: none; border-radius: 999px;
+      padding: 0.9rem 1.5rem;
+      font-size: 1rem; font-weight: 700;
+      color: var(--violeta-oscuro); cursor: pointer;
+      font-family: 'Quicksand', sans-serif;
+      box-shadow: 0 8px 25px rgba(251, 212, 138, 0.4);
+      transition: transform 0.3s ease;
+    }
+    .btn-retirar:hover:not(:disabled) { transform: translateY(-3px) scale(1.03); }
+    .btn-retirar:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .clarence-info {
+      display: flex; justify-content: space-around;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 12px;
+      padding: 0.7rem;
+      margin-bottom: 0.8rem;
+      font-size: 0.85rem;
+    }
+    .clarence-info .bloque { text-align: center; }
+    .clarence-info .label { color: var(--lavanda); font-size: 0.7rem; text-transform: uppercase; }
+    .clarence-info .valor { color: var(--dorado); font-weight: 700; font-size: 1rem; }
+
+    /* ===== RULETA ROJO/NEGRO ===== */
+    .ruleta-casino-wrap {
+      position: relative;
+      width: min(300px, 80vw);
+      margin: 1.5rem auto;
+    }
+    .ruleta-casino {
+      width: 100%; aspect-ratio: 1/1;
+      border-radius: 50%;
+      border: 8px solid #8b6914;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(0, 0, 0, 0.5);
+      background: conic-gradient(
+        #e53935 0deg 9.73deg, #1a1a1a 9.73deg 19.46deg,
+        #e53935 19.46deg 29.19deg, #1a1a1a 29.19deg 38.92deg,
+        #e53935 38.92deg 48.65deg, #1a1a1a 48.65deg 58.38deg,
+        #e53935 58.38deg 68.11deg, #1a1a1a 68.11deg 77.84deg,
+        #e53935 77.84deg 87.57deg, #1a1a1a 87.57deg 97.3deg,
+        #e53935 97.3deg 107.03deg, #1a1a1a 107.03deg 116.76deg,
+        #e53935 116.76deg 126.49deg, #1a1a1a 126.49deg 136.22deg,
+        #e53935 136.22deg 145.95deg, #1a1a1a 145.95deg 155.68deg,
+        #e53935 155.68deg 165.41deg, #1a1a1a 165.41deg 175.14deg,
+        #e53935 175.14deg 184.87deg, #1a1a1a 184.87deg 194.6deg,
+        #e53935 194.6deg 204.33deg, #1a1a1a 204.33deg 214.06deg,
+        #e53935 214.06deg 223.79deg, #1a1a1a 223.79deg 233.52deg,
+        #e53935 233.52deg 243.25deg, #1a1a1a 243.25deg 252.98deg,
+        #e53935 252.98deg 262.71deg, #1a1a1a 262.71deg 272.44deg,
+        #e53935 272.44deg 282.17deg, #1a1a1a 282.17deg 291.9deg,
+        #e53935 291.9deg 301.63deg, #1a1a1a 301.63deg 311.36deg,
+        #e53935 311.36deg 321.09deg, #1a1a1a 321.09deg 330.82deg,
+        #e53935 330.82deg 340.55deg, #1a1a1a 340.55deg 350.28deg,
+        #43a047 350.28deg 360deg
+      );
+      transition: transform 4s cubic-bezier(0.17, 0.89, 0.32, 1.15);
+      position: relative;
+    }
+    .ruleta-casino::after {
+      content: '36';
+      position: absolute;
+      inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem; color: var(--dorado);
+      text-shadow: 0 0 20px rgba(251, 212, 138, 0.5);
+      font-weight: 700;
+    }
+    .ruleta-puntero-casino {
+      position: absolute;
+      top: -10px; left: 50%;
+      transform: translateX(-50%);
+      width: 0; height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 20px solid var(--dorado);
+      z-index: 5;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+    }
+
+    .apuestas-ruleta {
+      display: flex; gap: 0.5rem; justify-content: center;
+      margin: 1.2rem 0; flex-wrap: wrap;
+    }
+    .apuesta-opcion {
+      padding: 0.7rem 1.5rem;
+      border-radius: 12px;
+      border: 2px solid transparent;
+      cursor: pointer;
+      font-weight: 700;
+      font-family: 'Quicksand', sans-serif;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      color: white;
+    }
+    .apuesta-opcion.rojo { background: #e53935; }
+    .apuesta-opcion.negro { background: #1a1a1a; border-color: rgba(255,255,255,0.3); }
+    .apuesta-opcion.verde { background: #43a047; }
+    .apuesta-opcion:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+    .apuesta-opcion.activa { transform: scale(1.05); box-shadow: 0 0 25px currentColor; }
+    .apuesta-opcion.rojo.activa { box-shadow: 0 0 25px rgba(229, 57, 53, 0.8); }
+    .apuesta-opcion.negro.activa { box-shadow: 0 0 25px rgba(100, 100, 100, 0.8); }
+    .apuesta-opcion.verde.activa { box-shadow: 0 0 25px rgba(67, 160, 71, 0.8); }
+
+    /* ===== TRAGAMONEDAS ===== */
+    .slots-wrap-casino {
+      display: flex; justify-content: center; gap: 0.5rem;
+      margin: 1.2rem 0; padding: 1.2rem;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 18px;
+      border: 3px solid rgba(251, 212, 138, 0.3);
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.5);
+    }
+    .slot-item-casino {
+      width: 80px; height: 100px;
+      background: linear-gradient(180deg, #fff, #f0e8ff);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem;
+      box-shadow: inset 0 4px 15px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+    }
+    .slot-item-casino.spin { animation: slotSpin 0.15s linear infinite; }
+    @keyframes slotSpin {
+      0% { transform: translateY(-5px); }
+      50% { transform: translateY(5px); }
+      100% { transform: translateY(-5px); }
+    }
+
+    /* ===== CARA O CRUZ ===== */
+    .moneda-grande {
+      width: 130px; height: 130px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, var(--dorado), #d4a14a);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem;
+      margin: 1.5rem auto;
+      box-shadow: 0 15px 40px rgba(251, 212, 138, 0.4);
+      transition: transform 0.6s ease;
+    }
+    .moneda-grande.girando { animation: girarMoneda 1.2s ease-in-out infinite; }
+    @keyframes girarMoneda {
+      0% { transform: rotateY(0deg); }
+      100% { transform: rotateY(360deg); }
+    }
+    .botones-moneda {
+      display: flex; gap: 1rem; justify-content: center;
+      margin-bottom: 1.2rem; flex-wrap: wrap;
+    }
+    .btn-eleccion {
+      padding: 0.8rem 1.8rem;
+      border-radius: 999px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: 'Quicksand', sans-serif;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      color: white;
+    }
+    .btn-cara { background: linear-gradient(130deg, #fbc02d, #f57f17); }
+    .btn-cruz { background: linear-gradient(130deg, #5c6bc0, #283593); }
+    .btn-eleccion:hover:not(:disabled) { transform: translateY(-3px) scale(1.05); }
+    .btn-eleccion:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ===== CARTAS ===== */
+    .cartas-wrap-casino {
+      display: flex; justify-content: center; gap: 1rem;
+      margin: 1.5rem 0; flex-wrap: wrap;
+    }
+    .carta-casino {
+      width: 80px; height: 120px;
+      background: linear-gradient(145deg, #fff, #e8e0f5);
+      border-radius: 10px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      transition: transform 0.5s ease;
+      position: relative;
+      color: #1a1a1a;
+    }
+    .carta-casino.roja { color: #d32f2f; }
+    .carta-casino .numero { font-size: 1.8rem; font-weight: 700; font-family: 'Playfair Display', serif; }
+    .carta-casino .palo { font-size: 2rem; line-height: 1; }
+    .carta-casino.oculta {
+      background: linear-gradient(145deg, var(--violeta-medio), #3d2468);
+      color: var(--dorado);
+      font-size: 2.5rem;
+    }
+    .carta-casino.oculta::before { content: '🎴'; }
+
+    .botones-cartas {
+      display: flex; gap: 1rem; justify-content: center;
+      margin-bottom: 1.2rem; flex-wrap: wrap;
+    }
+    .btn-carta {
+      padding: 0.8rem 1.8rem;
+      border-radius: 999px;
+      border: none;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: 'Quicksand', sans-serif;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      color: white;
+    }
+    .btn-mayor { background: linear-gradient(130deg, #4caf50, #1b5e20); }
+    .btn-menor { background: linear-gradient(130deg, #e53935, #b71c1c); }
+    .btn-carta:hover:not(:disabled) { transform: translateY(-3px) scale(1.05); }
+    .btn-carta:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ===== HISTORIAL ===== */
+    .historial-casino {
+      max-width: 750px; margin: 0 auto 3rem; padding: 0 1rem;
+    }
+    .historial-caja {
+      background: rgba(30, 16, 53, 0.85);
+      border: 1px solid rgba(183, 155, 234, 0.2);
+      border-radius: 20px;
+      padding: 1.5rem;
+    }
+    .historial-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem; color: var(--dorado);
+      margin-bottom: 1rem;
+    }
+    .historial-item {
+      padding: 0.6rem 0;
+      border-bottom: 1px solid rgba(183, 155, 234, 0.1);
+      display: flex; justify-content: space-between;
+      align-items: center; font-size: 0.85rem;
+    }
+    .historial-item:last-child { border-bottom: none; }
+    .historial-item .ganado { color: #4caf50; font-weight: 700; }
+    .historial-item .perdido { color: #f44336; font-weight: 700; }
+    .historial-vacio {
+      text-align: center; color: var(--lavanda);
+      opacity: 0.6; padding: 1rem; font-style: italic;
+    }
+
+    /* ===== FOOTER ===== */
+    .casino-footer {
+      text-align: center; padding: 2rem 1.5rem;
+      color: var(--lavanda); opacity: 0.5; font-size: 0.8rem;
+    }
+
+    /* ===== TOAST ===== */
+    .casino-toast {
+      position: fixed; bottom: 1.5rem; left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: linear-gradient(145deg, var(--dorado), var(--rosa));
+      color: var(--violeta-oscuro);
+      font-weight: 700; padding: 0.8rem 1.4rem;
+      border-radius: 999px;
+      box-shadow: 0 12px 30px rgba(242, 107, 158, 0.4);
+      z-index: 200; opacity: 0; pointer-events: none;
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      max-width: 90vw; text-align: center; font-size: 0.9rem;
+    }
+    .casino-toast.mostrar {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 520px) {
+      .casino-user-info .chip { font-size: 0.75rem; padding: 0.3rem 0.6rem; }
+      .casino-logo { font-size: 1.1rem; }
+      .slot-item-casino { width: 60px; height: 80px; font-size: 2.2rem; }
+      .carta-casino { width: 65px; height: 100px; }
+      .clarence-info { flex-direction: column; gap: 0.4rem; }
+      .clarence-info .bloque { display: flex; justify-content: space-between; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header class="casino-header">
+  <a href="index.html" class="casino-volver">← Volver</a>
+  <div class="casino-logo">Casino</div>
+  <div class="casino-user-info">
+    <div class="chip">💰 <span class="num" id="header-puntos">0</span></div>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="casino-hero">
+  <h1>Casino del Amor</h1>
+  <div class="sub"></div>
+</section>
+
+<!-- ===== SELECTOR DE JUEGOS ===== -->
+<div class="juegos-tabs">
+  <button class="juego-tab activo" data-juego="clarence">Miamor Road</button>
+  <button class="juego-tab" data-juego="ruleta">🎡 Ruleta</button>
+  <button class="juego-tab" data-juego="slots">🎰 Tragamonedas</button>
+  <button class="juego-tab" data-juego="moneda">🪙 Cara o Cruz</button>
+  <button class="juego-tab" data-juego="cartas">🃏 Cartas</button>
+</div>
+
+<!-- ===== JUEGO: CLARENCE ROAD ===== -->
+<section class="juego-seccion activo" id="juego-clarence">
+  <div class="juego-caja">
+    <h2 class="juego-titulo">Miamor Road</h2>
+    <p class="juego-sub">Ayuda a Tumobio a cruzar la carretera. Más lejos = más multiplicador, pero más riesgo.</p>
+
+    <!-- Selector de dificultad -->
+    <div class="dificultad-selector">
+      <div class="dificultad-top">
+        <span class="label">Riesgo</span>
+        <span class="actual" id="dificultad-actual">Fácil</span>
+      </div>
+      <div class="dificultad-opciones">
+        <button class="dif-opcion activo" data-dif="facil">
+          <span class="icono">🟢</span>
+          <span class="nombre">Fácil</span>
+          <span class="multi">x5</span>
+        </button>
+        <button class="dif-opcion" data-dif="medio">
+          <span class="icono">🟡</span>
+          <span class="nombre">Medio</span>
+          <span class="multi">x15</span>
+        </button>
+        <button class="dif-opcion" data-dif="dificil">
+          <span class="icono">🟠</span>
+          <span class="nombre">Difícil</span>
+          <span class="multi">x50</span>
+        </button>
+        <button class="dif-opcion" data-dif="experto">
+          <span class="icono">🔴</span>
+          <span class="nombre">Experto</span>
+          <span class="multi">x200</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Barra de multiplicadores -->
+    <div class="multiplicadores-bar" id="multiplicadores-bar"></div>
+
+    <!-- Info de la partida -->
+    <div class="clarence-info">
+      <div class="bloque">
+        <div class="label">Apuesta</div>
+        <div class="valor" id="clarence-apuesta">10</div>
+      </div>
+      <div class="bloque">
+        <div class="label">Fila actual</div>
+        <div class="valor" id="clarence-fila">0 / 10</div>
+      </div>
+      <div class="bloque">
+        <div class="label">Ganancia actual</div>
+        <div class="valor" id="clarence-ganancia">10 pts</div>
+      </div>
+      <div class="bloque">
+        <div class="label">Multiplicador</div>
+        <div class="valor" id="clarence-multi">x1.00</div>
+      </div>
+    </div>
+
+    <!-- Carretera -->
+    <div class="clarence-road" id="clarence-road"></div>
+
+    <!-- Botones -->
+    <div class="apuesta-wrap">
+      <span class="apuesta-label">Apuesta:</span>
+      <input type="number" class="apuesta-input" id="apuesta-clarence" value="10" min="10">
+      <button class="apuesta-btn-mini" onclick="setApuesta('clarence', 10)">10</button>
+      <button class="apuesta-btn-mini" onclick="setApuesta('clarence', 50)">50</button>
+      <button class="apuesta-btn-mini" onclick="setApuesta('clarence', 100)">100</button>
+      <button class="apuesta-btn-mini" onclick="setApuesta('clarence', 'all')">ALL-IN</button>
+    </div>
+
+    <div class="clarence-botones">
+      <button class="btn-avanzar" id="btn-avanzar" disabled>🚶 AVANZAR</button>
+      <button class="btn-retirar" id="btn-retirar" disabled>💸 RETIRAR</button>
+      <button class="jugar-btn" id="btn-empezar-clarence">▶️ EMPEZAR</button>
+    </div>
+    <div class="resultado-casino" id="resultado-clarence"></div>
+  </div>
+</section>
+
+<!-- ===== JUEGO: RULETA ===== -->
+<section class="juego-seccion" id="juego-ruleta">
+  <div class="juego-caja">
+    <h2 class="juego-titulo">🎡 Ruleta Rojo/Negro</h2>
+    <p class="juego-sub">Elige ROJO, NEGRO o el número exacto. Rojo/Negro paga x2, número exacto paga x36</p>
+
+    <div class="ruleta-casino-wrap">
+      <div class="ruleta-puntero-casino"></div>
+      <div class="ruleta-casino" id="ruleta-casino"></div>
+    </div>
+
+    <div class="apuestas-ruleta">
+      <button class="apuesta-opcion rojo" data-apuesta-ruleta="rojo">ROJO (x2)</button>
+      <button class="apuesta-opcion negro" data-apuesta-ruleta="negro">NEGRO (x2)</button>
+      <button class="apuesta-opcion verde" data-apuesta-ruleta="verde">VERDE (x36)</button>
+    </div>
+
+    <div class="apuesta-wrap">
+      <span class="apuesta-label">Apuesta:</span>
+      <input type="number" class="apuesta-input" id="apuesta-ruleta-c" value="10" min="10">
+      <button class="apuesta-btn-mini" onclick="setApuesta('ruleta-c', 10)">10</button>
+      <button class="apuesta-btn-mini" onclick="setApuesta('ruleta-c', 50)">50</button>
+      <button class="apuesta-btn-mini" onclick="setApuesta('ruleta-c', 100)">100</button>
+      <button class="apuesta-btn-mini" onclick="setApuesta('ruleta-c', 'all')">ALL-IN</button>
+    </div>
+
+    <button class="jugar-btn" id="btn-jugar-ruleta">🎡 Girar ruleta</button>
+    <div class="resultado-casino" id="resultado-ruleta"></div>
+  </div>
+</section>
+
+<!-- ===== JUEGO: SLOTS ===== -->
+<section class="juego-seccion" id="juego-slots">
+  <div class="juego-caja">
+    <h2 class="juego-titulo">🎰 Tragamonedas</h2>
+    <p class="juego-sub">3 iguales = x10 · 2 iguales = x2</p>
+
+    <div class="slots-wrap-casino">
+      <div class="slot-item-casino" id="slot-c1">🍒</div>
+      <div class="slot-item-casino" id="slot-c2">🍒</div>
+      <div class="slot-item-casino" id="slot-c3">🍒</div>
+    </div>
+
+    <div class="apuesta-wrap">
+      <span class="apuesta-label">Apuesta:</span>
+      <input type="number" class="apuesta-input" id="apuesta-slots-c" value="10" min="10">
+      <button class="apuesta-btn-mini" onclick="setApuesta('slots-c', 10)">10</button>
+      <button class="apuesta-btn-mini" onclick="setApuesta('slots-c', 50)">50</button>
+      <button class="apuesta-btn-mini" onclick="setApuesta('slots-c', 100)">100</button>
+      <button class="apuesta-btn-mini" onclick="setApuesta('slots-c', 'all')">ALL-IN</button>
+    </div>
+
+    <button class="jugar-btn" id="btn-jugar-slots-c">🎰 Girar</button>
+    <div class="resultado-casino" id="resultado-slots-c"></div>
+  </div>
+</section>
+
+<!-- ===== JUEGO: MONEDA ===== -->
+<section class="juego-seccion" id="juego-moneda">
+  <div class="juego-caja">
+    <h2 class="juego-titulo">🪙 Cara o Cruz</h2>
+    <p class="juego-sub">Elige bien y ganas x2</p>
+
+    <div class="moneda-grande" id="moneda-visual">🪙</div>
+
+    <div class="botones-moneda">
+      <button class="btn-eleccion btn-cara" id="btn-cara">☀️ CARA</button>
+      <button class="btn-eleccion btn-cruz" id="btn-cruz">🌙 CRUZ</button>
+    </div>
+
+    <div class="apuesta-wrap">
+      <span class="apuesta-label">Apuesta:</span>
+      <input type="number" class="apuesta-input" id="apuesta-moneda-c" value="10" min="10">
+      <button class="apuesta-btn-mini" onclick="setApuesta('moneda-c', 10)">10</button>
+      <button class="apuesta-btn-mini" onclick="setApuesta('moneda-c', 50)">50</button>
+      <button class="apuesta-btn-mini" onclick="setApuesta('moneda-c', 100)">100</button>
+      <button class="apuesta-btn-mini" onclick="setApuesta('moneda-c', 'all')">ALL-IN</button>
+    </div>
+
+    <div class="resultado-casino" id="resultado-moneda-c"></div>
+  </div>
+</section>
+
+<!-- ===== JUEGO: CARTAS ===== -->
+<section class="juego-seccion" id="juego-cartas">
+  <div class="juego-caja">
+    <h2 class="juego-titulo">🃏 Cartas Mayor/Menor</h2>
+    <p class="juego-sub">Adivina si la próxima carta es mayor o menor. Aciertas = x2</p>
+
+    <div class="cartas-wrap-casino">
+      <div class="carta-casino" id="carta-actual-c">
+        <div class="numero">A</div>
+        <div class="palo">♠</div>
+      </div>
+      <div class="carta-casino oculta" id="carta-siguiente-c"></div>
+    </div>
+
+    <div class="botones-cartas">
+      <button class="btn-carta btn-mayor" id="btn-mayor">⬆️ MAYOR</button>
+      <button class="btn-carta btn-menor" id="btn-menor">⬇️ MENOR</button>
+    </div>
+
+    <div class="apuesta-wrap">
+      <span class="apuesta-label">Apuesta:</span>
+      <input type="number" class="apuesta-input" id="apuesta-cartas-c" value="10" min="10">
+      <button class="apuesta-btn-mini" onclick="setApuesta('cartas-c', 10)">10</button>
+      <button class="apuesta-btn-mini" onclick="setApuesta('cartas-c', 50)">50</button>
+      <button class="apuesta-btn-mini" onclick="setApuesta('cartas-c', 100)">100</button>
+      <button class="apuesta-btn-mini" onclick="setApuesta('cartas-c', 'all')">ALL-IN</button>
+    </div>
+
+    <div class="resultado-casino" id="resultado-cartas-c"></div>
+  </div>
+</section>
+
+<!-- ===== HISTORIAL ===== -->
+<section class="historial-casino">
+  <div class="historial-caja">
+    <div class="historial-titulo">📜 Últimas jugadas</div>
+    <div id="historial-lista">
+      <div class="historial-vacio">Aún no has jugado nada 💗</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TOAST ===== -->
+<div class="casino-toast" id="casino-toast"></div>
+
+<footer class="casino-footer">
+  hecho con amor, para <span style="font-family:'Caveat',cursive;color:var(--rosa);">MI BEBITA</span> 🎰
+</footer>
+
+<script>
+// =============================================
+// ===== CONFIGURACIÓN DE FIREBASE =====
+// =============================================
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCuiiPRYY-jgznY6R3U0ifQIoMFdtPrpX0",
+  authDomain: "mibebita.firebaseapp.com",
+  projectId: "mibebita",
+  storageBucket: "mibebita.firebasestorage.app",
+  messagingSenderId: "1056630640385",
+  appId: "1:1056630640385:web:dfd9da8a1af3d713529500"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const BOT_WEBHOOK_URL = "http://localhost:5000/webhook/premio";
+const LS_TELEGRAM_ID = 'telegram_id_usuario';
+
+let TELEGRAM_ID = null;
+let usuarioData = { puntos: 0 };
+let historial = [];
+let jugando = false;
+
+// =============================================
+// ===== CONFIGURACIÓN DEL JUEGO CLARENCE =====
+// =============================================
+
+const DIFICULTADES = {
+  facil: {
+    nombre: 'Fácil',
+    filas: [
+      { prob: 0.22, multi: 1.05 },
+      { prob: 0.25, multi: 1.10 },
+      { prob: 0.29, multi: 1.20 },
+      { prob: 0.33, multi: 1.35 },
+      { prob: 0.37, multi: 1.55 },
+      { prob: 0.40, multi: 1.85 },
+      { prob: 0.42, multi: 2.25 },
+      { prob: 0.44, multi: 2.85 },
+      { prob: 0.45, multi: 3.65 },
+      { prob: 0.47, multi: 5.00 }
+    ]
+  },
+  medio: {
+    nombre: 'Medio',
+    filas: [
+      { prob: 0.35, multi: 1.08 },
+      { prob: 0.40, multi: 1.20 },
+      { prob: 0.45, multi: 1.40 },
+      { prob: 0.50, multi: 1.70 },
+      { prob: 0.53, multi: 2.10 },
+      { prob: 0.55, multi: 2.74 },
+      { prob: 0.58, multi: 3.70 },
+      { prob: 0.60, multi: 5.20 },
+      { prob: 0.61, multi: 7.80 },
+      { prob: 0.63, multi: 15.00 }
+    ]
+  },
+  dificil: {
+    nombre: 'Difícil',
+    filas: [
+      { prob: 0.45, multi: 1.15 },
+      { prob: 0.50, multi: 1.40 },
+      { prob: 0.55, multi: 1.80 },
+      { prob: 0.60, multi: 2.40 },
+      { prob: 0.63, multi: 3.40 },
+      { prob: 0.66, multi: 5.00 },
+      { prob: 0.70, multi: 7.50 },
+      { prob: 0.72, multi: 11.50 },
+      { prob: 0.73, multi: 18.00 },
+      { prob: 0.76, multi: 50.00 }
+    ]
+  },
+  experto: {
+    nombre: 'Experto',
+    filas: [
+      { prob: 0.55, multi: 1.25 },
+      { prob: 0.60, multi: 1.60 },
+      { prob: 0.65, multi: 2.20 },
+      { prob: 0.70, multi: 3.10 },
+      { prob: 0.74, multi: 4.50 },
+      { prob: 0.78, multi: 7.00 },
+      { prob: 0.81, multi: 11.00 },
+      { prob: 0.84, multi: 18.00 },
+      { prob: 0.86, multi: 32.00 },
+      { prob: 0.88, multi: 200.00 }
+    ]
+  }
+};
+
+let dificultadActual = 'facil';
+let clarenceFila = 0;
+let clarenceApuesta = 10;
+let clarenceActivo = false;
+
+// =============================================
+// ===== FUNCIONES DE FIREBASE =====
+// =============================================
+
+async function cargarDatosUsuario() {
+    if (!TELEGRAM_ID) return false;
+    try {
+        const doc = await db.collection('usuarios').doc(TELEGRAM_ID).get();
+        if (doc.exists) {
+            const data = doc.data();
+            usuarioData.puntos = data.puntos || 0;
+            usuarioData.nombre = data.nombre || 'Bebita';
+            actualizarHeader();
+            return true;
+        }
+        return false;
+    } catch (error) {
+        console.error('❌ Error:', error);
+        return false;
+    }
+}
+
+async function guardarDatosUsuario(campos) {
+    if (!TELEGRAM_ID) return false;
+    try {
+        await db.collection('usuarios').doc(TELEGRAM_ID).update(campos);
+        Object.assign(usuarioData, campos);
+        actualizarHeader();
+        return true;
+    } catch (error) {
+        console.error('❌ Error:', error);
+        return false;
+    }
+}
+
+function actualizarHeader() {
+    document.getElementById('header-puntos').textContent = usuarioData.puntos || 0;
+}
+
+// =============================================
+// ===== UTILIDADES =====
+// =============================================
+
+function mostrarToast(texto) {
+    const toast = document.getElementById('casino-toast');
+    toast.textContent = texto;
+    toast.classList.add('mostrar');
+    clearTimeout(toast._timer);
+    toast._timer = setTimeout(() => toast.classList.remove('mostrar'), 3000);
+}
+
+function mostrarResultado(elemento, texto, tipo) {
+    elemento.textContent = texto;
+    elemento.classList.remove('ganar', 'perder', 'neutro');
+    elemento.classList.add('mostrar', tipo);
+}
+
+function setApuesta(juego, valor) {
+    const input = document.getElementById('apuesta-' + juego);
+    if (!input) return;
+    if (valor === 'all') {
+        input.value = usuarioData.puntos || 0;
+    } else {
+        input.value = valor;
+    }
+    if (juego === 'clarence') {
+        clarenceApuesta = parseInt(input.value) || 10;
+    }
+}
+
+function agregarHistorial(texto, puntos, ganado) {
+    historial.unshift({
+        texto: texto,
+        puntos: puntos,
+        ganado: ganado,
+        fecha: new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+    });
+    historial = historial.slice(0, 10);
+    renderizarHistorial();
+}
+
+function renderizarHistorial() {
+    const cont = document.getElementById('historial-lista');
+    if (historial.length === 0) {
+        cont.innerHTML = '<div class="historial-vacio">Aún no has jugado nada 💗</div>';
+        return;
+    }
+    cont.innerHTML = historial.map(h => `
+        <div class="historial-item">
+            <span>${h.texto} <span style="opacity:0.5;font-size:0.75rem;">${h.fecha}</span></span>
+            <span class="${h.ganado ? 'ganado' : 'perdido'}">
+                ${h.ganado ? '+' : ''}${h.puntos} pts
+            </span>
+        </div>
+    `).join('');
+}
+
+// =============================================
+// ===== TABS DE JUEGOS =====
+// =============================================
+
+document.querySelectorAll('.juego-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.juego-tab').forEach(t => t.classList.remove('activo'));
+        document.querySelectorAll('.juego-seccion').forEach(s => s.classList.remove('activo'));
+        tab.classList.add('activo');
+        document.getElementById('juego-' + tab.dataset.juego).classList.add('activo');
+    });
+});
+
+// =============================================
+// ===== JUEGO 1: CLARENCE ROAD =====
+// =============================================
+
+function renderizarMultiplicadores() {
+    const bar = document.getElementById('multiplicadores-bar');
+    const dif = DIFICULTADES[dificultadActual];
+    bar.innerHTML = dif.filas.map((f, i) => {
+        let clase = 'multi-chip';
+        if (i < clarenceFila) clase += ' pasado';
+        if (i === clarenceFila - 1) clase += ' actual';
+        return `<div class="${clase}">x${f.multi.toFixed(2)}</div>`;
+    }).join('');
+}
+
+function renderizarCarretera() {
+    const road = document.getElementById('clarence-road');
+    const dif = DIFICULTADES[dificultadActual];
+    road.innerHTML = '';
+
+    // Renderizar de arriba (meta) hacia abajo (inicio)
+    for (let i = 9; i >= 0; i--) {
+        const fila = dif.filas[i];
+        const div = document.createElement('div');
+        div.className = 'carretera-fila';
+        div.id = 'fila-' + (i + 1);
+        if (i + 1 === clarenceFila) div.classList.add('actual');
+        if (i === 9) div.classList.add('meta');
+        
+        div.innerHTML = `
+            <span class="fila-info">Fila ${i + 1}</span>
+            <span class="fila-multi">x${fila.multi.toFixed(2)}</span>
+        `;
+        
+        road.appendChild(div);
+    }
+
+    // Si Clarence está activo, ponerlo en su fila
+    if (clarenceActivo) {
+        const filaActual = document.getElementById('fila-' + clarenceFila);
+        if (filaActual) {
+            const clarence = document.createElement('div');
+            clarence.className = 'clarence-runner';
+            clarence.innerHTML = `
+                <div class="clarence-body">
+                    <div class="clarence-cola"></div>
+                    <div class="clarence-cabeza"></div>
+                    <div class="clarence-cuerpo"></div>
+                    <div class="clarence-pata p1"></div>
+                    <div class="clarence-pata p2"></div>
+                </div>
+            `;
+            filaActual.appendChild(clarence);
+        }
+    }
+}
+
+function actualizarInfoClarence() {
+    const dif = DIFICULTADES[dificultadActual];
+    document.getElementById('clarence-apuesta').textContent = clarenceApuesta;
+    document.getElementById('clarence-fila').textContent = clarenceFila + ' / 10';
+    
+    const multiActual = clarenceFila === 0 ? 1 : dif.filas[clarenceFila - 1].multi;
+    const ganancia = Math.floor(clarenceApuesta * multiActual);
+    document.getElementById('clarence-ganancia').textContent = ganancia + ' pts';
+    document.getElementById('clarence-multi').textContent = 'x' + multiActual.toFixed(2);
+}
+
+async function empezarClarence() {
+    if (jugando) return;
+    if (clarenceActivo) return;
+
+    const apuesta = parseInt(document.getElementById('apuesta-clarence').value) || 10;
+    
+    if (apuesta < 10) {
+        mostrarToast('❌ Apuesta mínima: 10 puntos');
+        return;
+    }
+    if (apuesta > usuarioData.puntos) {
+        mostrarToast('❌ No tienes suficientes puntos');
+        return;
+    }
+
+    clarenceApuesta = apuesta;
+    clarenceFila = 0;
+    clarenceActivo = true;
+
+    // Descontar apuesta
+    await guardarDatosUsuario({ puntos: usuarioData.puntos - apuesta });
+
+    // Activar botones
+    document.getElementById('btn-avanzar').disabled = false;
+    document.getElementById('btn-retirar').disabled = false;
+    document.getElementById('btn-empezar-clarence').disabled = true;
+
+    renderizarCarretera();
+    renderizarMultiplicadores();
+    actualizarInfoClarence();
+    mostrarToast(`🎮 ¡Empezó el juego! Apuesta: ${apuesta} pts`);
+}
+
+async function avanzarClarence() {
+    if (jugando || !clarenceActivo) return;
+    if (clarenceFila >= 10) return;
+
+    jugando = true;
+    document.getElementById('btn-avanzar').disabled = true;
+    document.getElementById('btn-retirar').disabled = true;
+
+    const dif = DIFICULTADES[dificultadActual];
+    const filaSiguiente = dif.filas[clarenceFila];
+    const hayCarro = Math.random() < filaSiguiente.prob;
+
+    // Animar carros (siempre pasa alguno visualmente, pero solo atropella si hayCarro)
+    const filaActualDiv = document.getElementById('fila-' + (clarenceFila + 1));
+    
+    if (filaActualDiv) {
+        // Crear carro visual
+        if (hayCarro) {
+            const carro = crearCarro();
+            filaActualDiv.appendChild(carro);
+            reproducirSonido('atropello');
+
+            setTimeout(() => {
+                // Clarence atropellado
+                const clarence = document.querySelector('.clarence-runner');
+                if (clarence) clarence.classList.add('atropellado');
+                crearExplosion(filaActualDiv);
+                
+                setTimeout(async () => {
+                    mostrarResultado(
+                        document.getElementById('resultado-clarence'),
+                        `💀 ¡Carro te atropelló! Perdiste ${clarenceApuesta} pts`,
+                        'perder'
+                    );
+                    agregarHistorial('🚗 Clarence atropellado', -clarenceApuesta, false);
+                    
+                    clarenceActivo = false;
+                    jugando = false;
+                    document.getElementById('btn-empezar-clarence').disabled = false;
+                    document.getElementById('btn-avanzar').disabled = true;
+                    document.getElementById('btn-retirar').disabled = true;
+                }, 800);
+            }, 300);
+        } else {
+            // Carro pasa sin atropellar (visual)
+            const carro = crearCarro();
+            filaActualDiv.appendChild(carro);
+            reproducirSonido('avanzar');
+
+            setTimeout(async () => {
+                clarenceFila++;
+                renderizarCarretera();
+                renderizarMultiplicadores();
+                actualizarInfoClarence();
+
+                if (clarenceFila === 10) {
+                    // ¡Ganó!
+                    const ganancia = Math.floor(clarenceApuesta * dif.filas[9].multi);
+                    reproducirSonido('ganar');
+                    mostrarResultado(
+                        document.getElementById('resultado-clarence'),
+                        `🏆 ¡LLEGASTE A LA META! Ganaste ${ganancia} pts`,
+                        'ganar'
+                    );
+                    await guardarDatosUsuario({ puntos: usuarioData.puntos + ganancia });
+                    agregarHistorial('🏆 Clarence llegó a la meta', ganancia, true);
+                    
+                    clarenceActivo = false;
+                    jugando = false;
+                    document.getElementById('btn-empezar-clarence').disabled = false;
+                    document.getElementById('btn-avanzar').disabled = true;
+                    document.getElementById('btn-retirar').disabled = true;
+                } else {
+                    jugando = false;
+                    document.getElementById('btn-avanzar').disabled = false;
+                    document.getElementById('btn-retirar').disabled = false;
+                }
+            }, 500);
+        }
+    }
+}
+
+async function retirarClarence() {
+    if (jugando || !clarenceActivo || clarenceFila === 0) return;
+
+    const dif = DIFICULTADES[dificultadActual];
+    const multiActual = dif.filas[clarenceFila - 1].multi;
+    const ganancia = Math.floor(clarenceApuesta * multiActual);
+
+    reproducirSonido('ganar');
+    mostrarResultado(
+        document.getElementById('resultado-clarence'),
+        `💸 Retiraste en x${multiActual.toFixed(2)}. Ganaste ${ganancia} pts`,
+        'ganar'
+    );
+    
+    await guardarDatosUsuario({ puntos: usuarioData.puntos + ganancia });
+    agregarHistorial(`💸 Retiro en fila ${clarenceFila}`, ganancia, true);
+
+    clarenceActivo = false;
+    jugando = false;
+    document.getElementById('btn-empezar-clarence').disabled = false;
+    document.getElementById('btn-avanzar').disabled = true;
+    document.getElementById('btn-retirar').disabled = true;
+    renderizarCarretera();
+}
+
+function crearCarro() {
+    const carro = document.createElement('div');
+    const colores = ['rojo', 'azul', 'amarillo', 'verde', 'morado'];
+    const color = colores[Math.floor(Math.random() * colores.length)];
+    const direccion = Math.random() > 0.5 ? 'izq' : 'der';
+    const duracion = 0.8 + Math.random() * 0.8;
+    
+    carro.className = 'carro-css ' + direccion;
+    carro.style.animationDuration = duracion + 's';
+    carro.innerHTML = `
+        <div class="carro-body ${color}">
+            <div class="rueda izq"></div>
+            <div class="rueda der"></div>
+        </div>
+    `;
+    
+    setTimeout(() => carro.remove(), duracion * 1000 + 200);
+    return carro;
+}
+
+function crearExplosion(contenedor) {
+    const exp = document.createElement('div');
+    exp.className = 'explosion';
+    contenedor.appendChild(exp);
+    setTimeout(() => exp.remove(), 800);
+}
+
+// Eventos del selector de dificultad
+document.querySelectorAll('.dif-opcion').forEach(btn => {
+    btn.addEventListener('click', () => {
+        if (clarenceActivo) {
+            mostrarToast('⚠️ No puedes cambiar dificultad mientras juegas');
+            return;
+        }
+        document.querySelectorAll('.dif-opcion').forEach(b => b.classList.remove('activo'));
+        btn.classList.add('activo');
+        dificultadActual = btn.dataset.dif;
+        document.getElementById('dificultad-actual').textContent = DIFICULTADES[dificultadActual].nombre;
+        renderizarMultiplicadores();
+        renderizarCarretera();
+    });
+});
+
+document.getElementById('btn-empezar-clarence').addEventListener('click', empezarClarence);
+document.getElementById('btn-avanzar').addEventListener('click', avanzarClarence);
+document.getElementById('btn-retirar').addEventListener('click', retirarClarence);
+
+// =============================================
+// ===== JUEGO 2: RULETA =====
+// =============================================
+
+let apuestaRuletaTipo = null;
+let anguloRuleta = 0;
+let girandoRuleta = false;
+
+document.querySelectorAll('[data-apuesta-ruleta]').forEach(btn => {
+    btn.addEventListener('click', () => {
+        if (girandoRuleta) return;
+        document.querySelectorAll('[data-apuesta-ruleta]').forEach(b => b.classList.remove('activa'));
+        btn.classList.add('activa');
+        apuestaRuletaTipo = btn.dataset.apuestaRuleta;
+    });
+});
+
+document.getElementById('btn-jugar-ruleta').addEventListener('click', async () => {
+    if (girandoRuleta) return;
+    if (!apuestaRuletaTipo) {
+        mostrarToast('❌ Elige ROJO, NEGRO o VERDE primero');
+        return;
+    }
+
+    const apuesta = parseInt(document.getElementById('apuesta-ruleta-c').value) || 10;
+    if (apuesta < 10) {
+        mostrarToast('❌ Apuesta mínima: 10 puntos');
+        return;
+    }
+    if (apuesta > usuarioData.puntos) {
+        mostrarToast('❌ No tienes suficientes puntos');
+        return;
+    }
+
+    girandoRuleta = true;
+    await guardarDatosUsuario({ puntos: usuarioData.puntos - apuesta });
+
+    // Elegir número ganador (0-36)
+    const numeroGanador = Math.floor(Math.random() * 37);
+    const esVerde = numeroGanador === 0;
+    const esRojo = !esVerde && numeroGanador % 2 === 1;
+    const esNegro = !esVerde && !esRojo;
+
+    // Animar ruleta
+    const gradosPorNumero = 360 / 37;
+    const vueltasExtra = 5 * 360;
+    const anguloFinal = vueltasExtra + (numeroGanador * gradosPorNumero);
+    anguloRuleta += anguloFinal;
+    document.getElementById('ruleta-casino').style.transform = `rotate(${anguloRuleta}deg)`;
+
+    setTimeout(async () => {
+        let gano = false;
+        let multiplicador = 1;
+        let colorGanador = esVerde ? 'VERDE' : (esRojo ? 'ROJO' : 'NEGRO');
+
+        if (apuestaRuletaTipo === 'rojo' && esRojo) {
+            gano = true; multiplicador = 2;
+        } else if (apuestaRuletaTipo === 'negro' && esNegro) {
+            gano = true; multiplicador = 2;
+        } else if (apuestaRuletaTipo === 'verde' && esVerde) {
+            gano = true; multiplicador = 36;
+        }
+
+        if (gano) {
+            const ganancia = apuesta * multiplicador;
+            reproducirSonido('ganar');
+            mostrarResultado(
+                document.getElementById('resultado-ruleta'),
+                `🎉 ¡Salió ${numeroGanador} (${colorGanador})! Ganaste ${ganancia} pts`,
+                'ganar'
+            );
+            await guardarDatosUsuario({ puntos: usuarioData.puntos + ganancia });
+            agregarHistorial(`🎡 Ruleta: ${numeroGanador} ${colorGanador}`, ganancia, true);
+        } else {
+            reproducirSonido('atropello');
+            mostrarResultado(
+                document.getElementById('resultado-ruleta'),
+                `😢 Salió ${numeroGanador} (${colorGanador}). Perdiste ${apuesta} pts`,
+                'perder'
+            );
+            agregarHistorial(`🎡 Ruleta: ${numeroGanador} ${colorGanador}`, -apuesta, false);
+        }
+        girandoRuleta = false;
+    }, 4200);
+});
+
+// =============================================
+// ===== JUEGO 3: SLOTS =====
+// =============================================
+
+const SLOT_EMOJIS = ['🍒', '🍋', '🍊', '🍇', '⭐', '💎', '7️⃣', '🔔'];
+let girandoSlots = false;
+
+document.getElementById('btn-jugar-slots-c').addEventListener('click', async () => {
+    if (girandoSlots) return;
+
+    const apuesta = parseInt(document.getElementById('apuesta-slots-c').value) || 10;
+    if (apuesta < 10) { mostrarToast('❌ Apuesta mínima: 10 puntos'); return; }
+    if (apuesta > usuarioData.puntos) { mostrarToast('❌ No tienes suficientes puntos'); return; }
+
+    girandoSlots = true;
+    await guardarDatosUsuario({ puntos: usuarioData.puntos - apuesta });
+
+    const slots = [document.getElementById('slot-c1'), document.getElementById('slot-c2'), document.getElementById('slot-c3')];
+    slots.forEach(s => s.classList.add('spin'));
+
+    // Cambiar emojis rápido
+    const intervalo = setInterval(() => {
+        slots.forEach(s => s.textContent = SLOT_EMOJIS[Math.floor(Math.random() * SLOT_EMOJIS.length)]);
+    }, 80);
+
+    setTimeout(async () => {
+        clearInterval(intervalo);
+
+        // Elegir resultado final
+        const r1 = SLOT_EMOJIS[Math.floor(Math.random() * SLOT_EMOJIS.length)];
+        const r2 = SLOT_EMOJIS[Math.floor(Math.random() * SLOT_EMOJIS.length)];
+        const r3 = SLOT_EMOJIS[Math.floor(Math.random() * SLOT_EMOJIS.length)];
+
+        slots[0].textContent = r1;
+        slots[1].textContent = r2;
+        slots[2].textContent = r3;
+        slots.forEach(s => s.classList.remove('spin'));
+
+        let ganancia = 0;
+        let mensaje = '';
+
+        if (r1 === r2 && r2 === r3) {
+            ganancia = apuesta * 10;
+            mensaje = `🎉 ¡3 iguales! Ganaste ${ganancia} pts`;
+            reproducirSonido('ganar');
+        } else if (r1 === r2 || r2 === r3 || r1 === r3) {
+            ganancia = apuesta * 2;
+            mensaje = `🎊 ¡2 iguales! Ganaste ${ganancia} pts`;
+            reproducirSonido('ganar');
+        } else {
+            mensaje = `😢 Sin suerte. Perdiste ${apuesta} pts`;
+            reproducirSonido('atropello');
+        }
+
+        if (ganancia > 0) {
+            await guardarDatosUsuario({ puntos: usuarioData.puntos + ganancia });
+            mostrarResultado(document.getElementById('resultado-slots-c'), mensaje, 'ganar');
+            agregarHistorial(`🎰 Slots: ${r1}${r2}${r3}`, ganancia, true);
+        } else {
+            mostrarResultado(document.getElementById('resultado-slots-c'), mensaje, 'perder');
+            agregarHistorial(`🎰 Slots: ${r1}${r2}${r3}`, -apuesta, false);
+        }
+
+        girandoSlots = false;
+    }, 2000);
+});
+
+// =============================================
+// ===== JUEGO 4: MONEDA =====
+// =============================================
+
+let girandoMoneda = false;
+
+async function jugarMoneda(eleccion) {
+    if (girandoMoneda) return;
+
+    const apuesta = parseInt(document.getElementById('apuesta-moneda-c').value) || 10;
+    if (apuesta < 10) { mostrarToast('❌ Apuesta mínima: 10 puntos'); return; }
+    if (apuesta > usuarioData.puntos) { mostrarToast('❌ No tienes suficientes puntos'); return; }
+
+    girandoMoneda = true;
+    document.getElementById('btn-cara').disabled = true;
+    document.getElementById('btn-cruz').disabled = true;
+
+    await guardarDatosUsuario({ puntos: usuarioData.puntos - apuesta });
+
+    document.getElementById('moneda-visual').classList.add('girando');
+
+    setTimeout(async () => {
+        document.getElementById('moneda-visual').classList.remove('girando');
+        const resultado = Math.random() > 0.5 ? 'cara' : 'cruz';
+        document.getElementById('moneda-visual').textContent = resultado === 'cara' ? '☀️' : '🌙';
+
+        const gano = eleccion === resultado;
+        const ganancia = gano ? apuesta * 2 : 0;
+
+        if (gano) {
+            reproducirSonido('ganar');
+            mostrarResultado(
+                document.getElementById('resultado-moneda-c'),
+                `🎉 ¡Salió ${resultado.toUpperCase()}! Ganaste ${ganancia} pts`,
+                'ganar'
+            );
+            await guardarDatosUsuario({ puntos: usuarioData.puntos + ganancia });
+            agregarHistorial(`🪙 Moneda: ${resultado}`, ganancia, true);
+        } else {
+            reproducirSonido('atropello');
+            mostrarResultado(
+                document.getElementById('resultado-moneda-c'),
+                `😢 Salió ${resultado.toUpperCase()}. Perdiste ${apuesta} pts`,
+                'perder'
+            );
+            agregarHistorial(`🪙 Moneda: ${resultado}`, -apuesta, false);
+        }
+
+        document.getElementById('btn-cara').disabled = false;
+        document.getElementById('btn-cruz').disabled = false;
+        girandoMoneda = false;
+    }, 1500);
+}
+
+document.getElementById('btn-cara').addEventListener('click', () => jugarMoneda('cara'));
+document.getElementById('btn-cruz').addEventListener('click', () => jugarMoneda('cruz'));
+
+// =============================================
+// ===== JUEGO 5: CARTAS =====
+// =============================================
+
+let jugandoCartas = false;
+let cartaActualValor = 7;
+
+function renderizarCarta(elemento, valor) {
+    const palos = ['♠', '♥', '♦', '♣'];
+    const palo = palos[Math.floor(Math.random() * palos.length)];
+    const valores = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'];
+    const numero = valores[valor];
+    const esRojo = palo === '♥' || palo === '♦';
+    
+    elemento.className = 'carta-casino' + (esRojo ? ' roja' : '');
+    elemento.innerHTML = `
+        <div class="numero">${numero}</div>
+        <div class="palo">${palo}</div>
+    `;
+}
+
+async function jugarCartas(eleccion) {
+    if (jugandoCartas) return;
+
+    const apuesta = parseInt(document.getElementById('apuesta-cartas-c').value) || 10;
+    if (apuesta < 10) { mostrarToast('❌ Apuesta mínima: 10 puntos'); return; }
+    if (apuesta > usuarioData.puntos) { mostrarToast('❌ No tienes suficientes puntos'); return; }
+
+    jugandoCartas = true;
+    document.getElementById('btn-mayor').disabled = true;
+    document.getElementById('btn-menor').disabled = true;
+
+    await guardarDatosUsuario({ puntos: usuarioData.puntos - apuesta });
+
+    // Elegir nueva carta
+    const nuevaCarta = Math.floor(Math.random() * 13);
+    const cartaSiguiente = document.getElementById('carta-siguiente-c');
+
+    setTimeout(async () => {
+        renderizarCarta(cartaSiguiente, nuevaCarta);
+
+        let gano = false;
+        if (eleccion === 'mayor' && nuevaCarta > cartaActualValor) gano = true;
+        if (eleccion === 'menor' && nuevaCarta < cartaActualValor) gano = true;
+
+        const ganancia = gano ? apuesta * 2 : 0;
+
+        if (gano) {
+            reproducirSonido('ganar');
+            mostrarResultado(
+                document.getElementById('resultado-cartas-c'),
+                `🎉 ¡Acertaste! Ganaste ${ganancia} pts`,
+                'ganar'
+            );
+            await guardarDatosUsuario({ puntos: usuarioData.puntos + ganancia });
+            agregarHistorial(`🃏 Carta ${eleccion}`, ganancia, true);
+        } else {
+            reproducirSonido('atropello');
+            mostrarResultado(
+                document.getElementById('resultado-cartas-c'),
+                `😢 Fallaste. Perdiste ${apuesta} pts`,
+                'perder'
+            );
+            agregarHistorial(`🃏 Carta ${eleccion}`, -apuesta, false);
+        }
+
+        // La nueva carta pasa a ser la actual
+        cartaActualValor = nuevaCarta;
+        renderizarCarta(document.getElementById('carta-actual-c'), cartaActualValor);
+        cartaSiguiente.className = 'carta-casino oculta';
+        cartaSiguiente.innerHTML = '';
+
+        document.getElementById('btn-mayor').disabled = false;
+        document.getElementById('btn-menor').disabled = false;
+        jugandoCartas = false;
+    }, 1200);
+}
+
+document.getElementById('btn-mayor').addEventListener('click', () => jugarCartas('mayor'));
+document.getElementById('btn-menor').addEventListener('click', () => jugarCartas('menor'));
+
+// =============================================
+// ===== SONIDOS =====
+// =============================================
+
+const sonidos = {
+    avanzar: new Audio('https://actions.google.com/sounds/v1/cartoon/pop.ogg'),
+    atropello: new Audio('https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg'),
+    ganar: new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg')
+};
+
+Object.values(sonidos).forEach(s => s.volume = 0.3);
+
+function reproducirSonido(tipo) {
+    if (sonidos[tipo]) {
+        sonidos[tipo].currentTime = 0;
+        sonidos[tipo].play().catch(() => {});
+    }
+}
+
+// =============================================
+// ===== INICIALIZACIÓN =====
+// =============================================
+
+async function init() {
+    TELEGRAM_ID = localStorage.getItem(LS_TELEGRAM_ID);
+
+    if (!TELEGRAM_ID) {
+        document.body.innerHTML = `
+            <div style="display:flex;align-items:center;justify-content:center;min-height:100vh;text-align:center;padding:2rem;background:#1e1035;color:#fcf7ff;flex-direction:column;gap:1.5rem;font-family:'Quicksand',sans-serif;">
+                <h1 style="font-size:3rem;">💗</h1>
+                <h2 style="font-size:1.8rem;">Primero vincula tu Telegram en la página principal</h2>
+                <a href="index.html" style="padding:14px 40px;border-radius:999px;background:linear-gradient(130deg,#fbd48a,#f26b9e);color:#1e1035;font-weight:700;font-size:1.1rem;text-decoration:none;">← Volver al inicio</a>
+            </div>
+        `;
+        return;
+    }
+
+    await cargarDatosUsuario();
+    
+    // Renderizar juego inicial
+    renderizarCarretera();
+    renderizarMultiplicadores();
+    actualizarInfoClarence();
+    
+    console.log('🎰 Casino listo para:', TELEGRAM_ID);
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+
+</body>
+</html>
