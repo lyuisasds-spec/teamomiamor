@@ -428,6 +428,26 @@
     .ruleta-btn:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 20px 45px rgba(242, 107, 158, 0.45); }
     .ruleta-btn:active { transform: translateY(0) scale(0.96); }
     .ruleta-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+
+    .ruleta-btn-quemar {
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--crema);
+      background: linear-gradient(130deg, #ff6b35, var(--rosa));
+      border: none;
+      padding: 0.7rem 2rem;
+      border-radius: 999px;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      margin-bottom: 0.8rem;
+    }
+    .ruleta-btn-quemar:hover {
+      transform: translateY(-3px) scale(1.03);
+      box-shadow: 0 12px 35px rgba(255, 107, 53, 0.5);
+    }
+
     .ruleta-resultado {
       margin-top: 1.6rem;
       font-family: 'Caveat', cursive; font-size: 1.6rem;
@@ -784,7 +804,6 @@
       transform: scale(1.05);
     }
 
-    /* ===== TIENDA ===== */
     .tienda-section {
       padding: 5rem 1.5rem 6rem;
       background: linear-gradient(180deg, var(--violeta-oscuro), var(--violeta-profundo));
@@ -1043,6 +1062,137 @@
       margin-top: 0.5rem;
       letter-spacing: 0.05em;
     }
+
+    /* ===== MODAL QUEMAR PREMIOS ===== */
+    .quemar-overlay {
+      position: fixed; inset: 0; z-index: 400;
+      background: rgba(15, 8, 31, 0.9); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center;
+      padding: 1.5rem;
+    }
+    .quemar-overlay.abierto { display: flex; }
+    .quemar-caja {
+      max-width: 500px; width: 100%;
+      background: linear-gradient(165deg, var(--violeta-medio), #3d2468);
+      border: var(--borde-luz); border-radius: 24px;
+      padding: 2rem 1.8rem; box-shadow: var(--sombra-fuerte);
+      transform: scale(0.8); opacity: 0;
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      max-height: 90vh; overflow-y: auto;
+    }
+    .quemar-overlay.abierto .quemar-caja {
+      transform: scale(1); opacity: 1;
+    }
+    .quemar-caja h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem; color: var(--dorado);
+      text-align: center; margin-bottom: 0.3rem;
+    }
+    .quemar-sub {
+      text-align: center; color: var(--lavanda-suave);
+      font-size: 0.9rem; opacity: 0.8;
+      margin-bottom: 1.5rem;
+    }
+    .quemar-lista {
+      display: flex; flex-direction: column;
+      gap: 0.6rem; margin-bottom: 1.2rem;
+      max-height: 40vh; overflow-y: auto;
+      padding: 0.5rem;
+    }
+    .quemar-item {
+      background: rgba(255,255,255,0.05);
+      border: 2px solid rgba(183, 155, 234, 0.2);
+      border-radius: 12px;
+      padding: 0.9rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+    .quemar-item:hover {
+      border-color: var(--dorado);
+      background: rgba(251, 212, 138, 0.1);
+    }
+    .quemar-item.seleccionado {
+      border-color: var(--rosa);
+      background: rgba(242, 107, 158, 0.15);
+      box-shadow: 0 0 20px rgba(242, 107, 158, 0.3);
+    }
+    .quemar-item .check {
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      border: 2px solid rgba(183, 155, 234, 0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem; font-weight: 700;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+    .quemar-item.seleccionado .check {
+      background: var(--rosa);
+      border-color: var(--rosa);
+      color: var(--crema);
+    }
+    .quemar-item .texto {
+      font-family: 'Caveat', cursive;
+      font-size: 1.15rem;
+      color: var(--dorado);
+      flex: 1;
+    }
+    .quemar-item .fecha {
+      font-size: 0.7rem;
+      color: var(--lavanda);
+      opacity: 0.6;
+    }
+    .quemar-contador {
+      text-align: center; color: var(--lavanda-suave);
+      font-size: 0.95rem; margin-bottom: 1.2rem;
+    }
+    .quemar-contador strong {
+      color: var(--dorado); font-size: 1.2rem;
+    }
+    .quemar-botones {
+      display: flex; gap: 0.8rem;
+    }
+    .quemar-btn-cancelar {
+      flex: 1; padding: 0.9rem;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 999px; color: var(--crema);
+      font-weight: 600; cursor: pointer;
+      font-family: 'Quicksand', sans-serif;
+      transition: background 0.3s ease;
+    }
+    .quemar-btn-cancelar:hover {
+      background: rgba(255,255,255,0.15);
+    }
+    .quemar-btn-quemar {
+      flex: 2; padding: 0.9rem;
+      background: linear-gradient(130deg, #ff6b35, var(--rosa));
+      border: none; border-radius: 999px;
+      color: var(--crema);
+      font-weight: 700; cursor: pointer;
+      font-family: 'Quicksand', sans-serif;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .quemar-btn-quemar:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 30px rgba(255, 107, 53, 0.4);
+    }
+    .quemar-btn-quemar:disabled {
+      opacity: 0.4; cursor: not-allowed;
+    }
+    .quemar-lista::-webkit-scrollbar {
+      width: 6px;
+    }
+    .quemar-lista::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.05);
+      border-radius: 999px;
+    }
+    .quemar-lista::-webkit-scrollbar-thumb {
+      background: var(--lavanda);
+      border-radius: 999px;
+    }
   </style>
 </head>
 <body>
@@ -1092,6 +1242,27 @@
     <p class="celebracion-nivel" id="celebracion-nivel-texto"></p>
     <p class="celebracion-premio" id="celebracion-premio-texto"></p>
     <button class="celebracion-btn" id="celebracion-cerrar" type="button">Seguir explorando 💗</button>
+  </div>
+</div>
+
+<!-- ===== MODAL QUEMAR PREMIOS ===== -->
+<div id="quemar-overlay" class="quemar-overlay">
+  <div class="quemar-caja">
+    <h3>🔥 Quemar Premios</h3>
+    <p class="quemar-sub">Selecciona 2 premios para quemarlos y ganar 1 giro gratis</p>
+    
+    <div class="quemar-lista" id="quemar-lista">
+      <!-- Los premios se cargan aquí -->
+    </div>
+    
+    <div class="quemar-contador">
+      Seleccionados: <strong id="quemar-contador">0</strong> / 2
+    </div>
+    
+    <div class="quemar-botones">
+      <button class="quemar-btn-cancelar" onclick="cerrarQuemar()">Cancelar</button>
+      <button class="quemar-btn-quemar" id="quemar-btn" onclick="quemarPremios()" disabled>🔥 Quemar y ganar giro</button>
+    </div>
   </div>
 </div>
 
@@ -1281,6 +1452,7 @@
     <div class="ruleta-disco" id="rueda-disco"></div>
   </div>
   <p class="ruleta-puntos-info reveal">Tienes <strong id="ruleta-puntos-actual">0</strong> puntos · <strong id="ruleta-giros-actual">0</strong> giros disponibles · cada giro cuesta 65</p>
+  <button id="btn-quemar" type="button" class="ruleta-btn-quemar reveal">🔥 Quemar 2 premios por 1 giro</button>
   <button id="btn-girar" type="button" class="ruleta-btn reveal">Girar la ruleta</button>
   <p class="ruleta-resultado" id="ruleta-resultado"></p>
   <p class="ruleta-ayuda reveal">Amor aqui podras obtener puntos/xp para subir niveles y girar la ruleta cada premio diario sera diferente puede ser algo que te guste como algo que no... recuerda que es suerte(Se manda lo que te toco al bot asi que ojo) 💗</p>
@@ -1300,12 +1472,12 @@
       <div class="racha-label">días seguidos</div>
       <div class="racha-puntos" id="racha-puntos">+0 puntos hoy</div>
       <div class="racha-progreso">
-    <span style="font-size:0.8rem; color:var(--lavanda); opacity:0.5;">Día <span id="racha-dia-actual">0</span></span>
-    <div class="racha-barra-wrap">
-        <div class="racha-barra-fill" id="racha-barra-fill" style="width: 0%;"></div>
-    </div>
-    <span style="font-size:0.8rem; color:var(--lavanda); opacity:0.5;">Día <span id="racha-dia-siguiente">7</span></span>
-</div>
+        <span style="font-size:0.8rem; color:var(--lavanda); opacity:0.5;">Día <span id="racha-dia-actual">0</span></span>
+        <div class="racha-barra-wrap">
+            <div class="racha-barra-fill" id="racha-barra-fill" style="width: 0%;"></div>
+        </div>
+        <span style="font-size:0.8rem; color:var(--lavanda); opacity:0.5;">Día <span id="racha-dia-siguiente">7</span></span>
+      </div>
       <div class="racha-stats">
         <div class="racha-stat">
           <div class="valor" id="racha-total">0</div>
@@ -1418,6 +1590,7 @@ let usuarioData = {
 
 let datosCargados = false;
 let comprando = false;
+let premiosSeleccionados = [];
 
 function obtenerTelegramIdGuardado() {
     return localStorage.getItem(LS_TELEGRAM_ID);
@@ -1503,7 +1676,6 @@ async function guardarDatosUsuario(campos) {
         Object.assign(usuarioData, campos);
         return true;
     } catch (error) {
-        // Si el documento no existe, usar set
         if (error.code === 'not-found') {
             await docRef.set(campos);
             Object.assign(usuarioData, campos);
@@ -1712,13 +1884,11 @@ function actualizarRachas() {
     const racha = usuarioData.racha || 0;
     const puntosRacha = racha * 5;
     
-    // Textos principales
     document.getElementById('racha-dias').textContent = racha;
     document.getElementById('racha-puntos').textContent = `+${puntosRacha} puntos hoy`;
     document.getElementById('racha-total').textContent = racha;
     document.getElementById('racha-puntos-total').textContent = puntosRacha;
     
-    // Nivel de racha (0-5)
     let nivelRacha = 0;
     if (racha >= 30) nivelRacha = 5;
     else if (racha >= 20) nivelRacha = 4;
@@ -1731,7 +1901,6 @@ function actualizarRachas() {
     document.getElementById('racha-nivel').textContent = `${emojis[nivelRacha]} Nv ${nivelRacha}`;
     document.getElementById('racha-nivel-badge').textContent = `🔥 Racha Nivel ${nivelRacha}`;
     
-    // ===== BARRRA DE PROGRESO (CORREGIDA) =====
     const diaActual = racha > 0 ? (racha % 7 || 7) : 0;
     const siguienteNivel = racha > 0 ? (diaActual + 1) : 7;
     
@@ -1754,9 +1923,7 @@ async function verificarRacha() {
         localStorage.setItem('amor_ultima_visita', hoy);
         await cargarDatosUsuario();
         
-        // Verificar si es nuevo día
         if (usuarioData.ultima_visita !== hoy) {
-            // Aumentar racha si no hay logro de hoy
             if (!usuarioData.logros || usuarioData.logros['racha-' + hoy] !== hoy) {
                 const nuevaRacha = (usuarioData.racha || 0) + 1;
                 const puntosRacha = nuevaRacha * 5;
@@ -1932,7 +2099,6 @@ if (btnGirar && rueda && resultadoEl) {
             btnGirar.disabled = false;
             const premio = PREMIOS_RULETA[indiceGanador];
             
-            // ===== PROCESAR PREMIOS DE PUNTOS/XP =====
             let puntosExtra = 0;
             let xpExtra = 0;
             let mensajeExtra = '';
@@ -1951,7 +2117,6 @@ if (btnGirar && rueda && resultadoEl) {
                 mensajeExtra = ' (-50 XP)';
             }
             
-            // RECARGAR DATOS ANTES DE GUARDAR PARA NO SOBRESCRIBIR
             await cargarDatosUsuario();
             
             if (puntosExtra !== 0 || xpExtra !== 0) {
@@ -1989,7 +2154,6 @@ if (btnGirar && rueda && resultadoEl) {
                 if (xpExtra < 0) mostrarToast(`😅 Perdiste ${Math.abs(xpExtra)} XP`);
             }
             
-            // GUARDAR PREMIO EN EL HISTORIAL (AGREGAR, NO SOBRESCRIBIR)
             const premiosLista = usuarioData.premios || [];
             premiosLista.push({
                 premio: premio,
@@ -2056,6 +2220,117 @@ async function guardarEnBot(usuarioId, nombre, premio, tipo, nivel = null) {
         console.error('❌ Error al guardar en el bot:', error);
     }
 }
+
+// =============================================
+// ===== SISTEMA DE QUEMAR PREMIOS =====
+// =============================================
+
+function abrirQuemar() {
+    const premios = usuarioData.premios || [];
+    
+    if (premios.length < 2) {
+        mostrarToast('❌ Necesitas al menos 2 premios de ruleta para quemar');
+        return;
+    }
+    
+    premiosSeleccionados = [];
+    renderizarListaQuemar();
+    document.getElementById('quemar-overlay').classList.add('abierto');
+}
+
+function cerrarQuemar() {
+    document.getElementById('quemar-overlay').classList.remove('abierto');
+    premiosSeleccionados = [];
+}
+
+function renderizarListaQuemar() {
+    const cont = document.getElementById('quemar-lista');
+    const premios = usuarioData.premios || [];
+    
+    cont.innerHTML = '';
+    
+    premios.forEach((premio, index) => {
+        const item = document.createElement('div');
+        item.className = 'quemar-item' + (premiosSeleccionados.includes(index) ? ' seleccionado' : '');
+        item.onclick = () => togglePremioQuemar(index);
+        
+        const fecha = (premio.fecha || '').slice(0, 10);
+        
+        item.innerHTML = `
+            <div class="check">${premiosSeleccionados.includes(index) ? '✓' : ''}</div>
+            <div style="flex:1; text-align:left;">
+                <div class="texto">${premio.premio || 'Sin premio'}</div>
+                <div class="fecha">📅 ${fecha}</div>
+            </div>
+        `;
+        
+        cont.appendChild(item);
+    });
+    
+    actualizarContadorQuemar();
+}
+
+function togglePremioQuemar(index) {
+    const pos = premiosSeleccionados.indexOf(index);
+    
+    if (pos !== -1) {
+        premiosSeleccionados.splice(pos, 1);
+    } else {
+        if (premiosSeleccionados.length >= 2) {
+            mostrarToast('⚠️ Solo puedes seleccionar 2 premios');
+            return;
+        }
+        premiosSeleccionados.push(index);
+    }
+    
+    renderizarListaQuemar();
+}
+
+function actualizarContadorQuemar() {
+    document.getElementById('quemar-contador').textContent = premiosSeleccionados.length;
+    document.getElementById('quemar-btn').disabled = premiosSeleccionados.length !== 2;
+}
+
+async function quemarPremios() {
+    if (premiosSeleccionados.length !== 2) return;
+    
+    if (!TELEGRAM_ID) {
+        mostrarToast('❌ Primero vincula tu Telegram 💗');
+        return;
+    }
+    
+    try {
+        await cargarDatosUsuario();
+        
+        const premios = usuarioData.premios || [];
+        const indices = [...premiosSeleccionados].sort((a, b) => b - a);
+        const premiosQuemados = indices.map(i => premios[i]);
+        
+        indices.forEach(i => premios.splice(i, 1));
+        
+        const girosActuales = usuarioData.giros_ruleta || 0;
+        const nuevosGiros = girosActuales + 1;
+        
+        await guardarDatosUsuario({
+            premios: premios,
+            giros_ruleta: nuevosGiros
+        });
+        
+        const textoQuemados = premiosQuemados.map(p => p.premio).join(' + ');
+        guardarEnBot(TELEGRAM_ID, 'Bebita', `Quemó: ${textoQuemados} y ganó 1 giro`, 'quema');
+        
+        actualizarHUD();
+        cerrarQuemar();
+        
+        mostrarToast(`🔥 ¡Quemaste 2 premios y ganaste 1 giro!`);
+        
+    } catch (error) {
+        console.error('❌ Error al quemar:', error);
+        mostrarToast('❌ Error al quemar los premios');
+    }
+}
+
+document.getElementById('btn-quemar').addEventListener('click', abrirQuemar);
 
 // =============================================
 // ===== TIENDA =====
