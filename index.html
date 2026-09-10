@@ -111,6 +111,42 @@
     }
     .amor-toast.mostrar { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+    /* ===== BOTÓN CASINO (esquina inferior derecha) ===== */
+    .casino-btn {
+      position: fixed;
+      bottom: 4.8rem;
+      right: 1.5rem;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      background: linear-gradient(145deg, #ff6b35, #f26b9e);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 999px;
+      padding: 0.7rem 1.3rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--crema);
+      text-decoration: none;
+      box-shadow: 0 8px 24px rgba(255, 107, 53, 0.5);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      font-family: 'Quicksand', sans-serif;
+      animation: casino-pulso 2s ease-in-out infinite;
+    }
+    .casino-btn:hover {
+      transform: translateY(-3px) scale(1.06);
+      box-shadow: 0 12px 32px rgba(255, 107, 53, 0.8);
+    }
+    .casino-btn:active {
+      transform: translateY(0) scale(0.96);
+    }
+    @keyframes casino-pulso {
+      0%, 100% { box-shadow: 0 8px 24px rgba(255, 107, 53, 0.5); }
+      50% { box-shadow: 0 8px 32px rgba(255, 107, 53, 0.9); }
+    }
+
     .hero {
       min-height: 100svh;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -428,7 +464,6 @@
     .ruleta-btn:hover { transform: translateY(-4px) scale(1.03); box-shadow: 0 20px 45px rgba(242, 107, 158, 0.45); }
     .ruleta-btn:active { transform: translateY(0) scale(0.96); }
     .ruleta-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
-
     .ruleta-btn-quemar {
       font-family: 'Quicksand', sans-serif;
       font-weight: 700;
@@ -447,7 +482,6 @@
       transform: translateY(-3px) scale(1.03);
       box-shadow: 0 12px 35px rgba(255, 107, 53, 0.5);
     }
-
     .ruleta-resultado {
       margin-top: 1.6rem;
       font-family: 'Caveat', cursive; font-size: 1.6rem;
@@ -1209,6 +1243,9 @@
   <span>Nv <span id="hud-nivel">0</span></span>
 </div>
 
+<!-- Botón Casino (esquina inferior derecha) -->
+<a href="casino.html" class="casino-btn" title="Ir al Casino">🎰 Casino</a>
+
 <!-- Toast -->
 <div id="amor-toast" class="amor-toast"></div>
 
@@ -1251,9 +1288,7 @@
     <h3>🔥 Quemar Premios</h3>
     <p class="quemar-sub">Selecciona 2 premios para quemarlos y ganar 1 giro gratis</p>
     
-    <div class="quemar-lista" id="quemar-lista">
-      <!-- Los premios se cargan aquí -->
-    </div>
+    <div class="quemar-lista" id="quemar-lista"></div>
     
     <div class="quemar-contador">
       Seleccionados: <strong id="quemar-contador">0</strong> / 2
@@ -1505,9 +1540,7 @@
     <p style="color: var(--lavanda); margin-top: 0.5rem; font-size: 0.95rem;">Canjea tus puntos por premios especiales 💗</p>
   </div>
 
-  <div class="tienda-grid" id="tienda-grid">
-    <!-- Los productos se cargan desde Firebase -->
-  </div>
+  <div class="tienda-grid" id="tienda-grid"></div>
 
   <div id="tienda-mensaje" style="text-align:center; margin-top: 1.5rem; font-family:'Caveat', cursive; font-size:1.3rem; color:var(--dorado); min-height:2rem;"></div>
 </section>
@@ -1563,14 +1596,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-// =============================================
-// ===== CONFIGURACIÓN DEL BOT =====
-// =============================================
 const BOT_WEBHOOK_URL = "http://localhost:5000/webhook/premio";
-
-// =============================================
-// ===== SISTEMA DE USUARIO =====
-// =============================================
 
 const LS_TELEGRAM_ID = 'telegram_id_usuario';
 
@@ -1690,7 +1716,7 @@ async function guardarDatosUsuario(campos) {
 // ===== SISTEMA DE LOGROS Y PUNTOS =====
 // =============================================
 
-const NIVELES = [0, 140, 250, 400, 600, 1000, 1500, 1700, 2000, 2200, 2500];
+const NIVELES = [0, 140, 250, 400, 600, 1000, 1500, 1700, 2000, 3500, 4500];
 const RECOMPENSAS_NIVEL = [
     "",
     "Felicidades amor!",
@@ -2055,14 +2081,10 @@ if (btnGirar && rueda && resultadoEl) {
         const giros = usuarioData.giros_ruleta || 0;
         const puntos = usuarioData.puntos || 0;
         
-        console.log('🎰 Giros disponibles:', giros);
-        console.log('💰 Puntos disponibles:', puntos);
-        
         let usarGiro = giros > 0;
         let costeEnPuntos = 0;
         
         if (usarGiro) {
-            console.log('🎰 Usando giro gratis');
             const nuevosGiros = giros - 1;
             await guardarDatosUsuario({ giros_ruleta: nuevosGiros });
         } else {
@@ -2070,8 +2092,6 @@ if (btnGirar && rueda && resultadoEl) {
                 mostrarToast(`❌ No tienes giros ni puntos suficientes. Necesitas ${COSTO_GIRO} puntos o tener giros disponibles.`);
                 return;
             }
-            
-            console.log('💰 Cobrando 65 puntos por el giro');
             costeEnPuntos = COSTO_GIRO;
             const nuevosPuntos = puntos - COSTO_GIRO;
             await guardarDatosUsuario({ puntos: nuevosPuntos });
