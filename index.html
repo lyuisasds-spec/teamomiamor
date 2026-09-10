@@ -1243,7 +1243,7 @@
   <span>Nv <span id="hud-nivel">0</span></span>
 </div>
 
-<!-- Botón Casino (esquina inferior derecha) -->
+<!-- Botón Casino -->
 <a href="casino.html" class="casino-btn" title="Ir al Casino">🎰 Casino</a>
 
 <!-- Toast -->
@@ -1282,7 +1282,7 @@
   </div>
 </div>
 
-<!-- ===== MODAL QUEMAR PREMIOS ===== -->
+<!-- MODAL QUEMAR PREMIOS -->
 <div id="quemar-overlay" class="quemar-overlay">
   <div class="quemar-caja">
     <h3>🔥 Quemar Premios</h3>
@@ -1493,7 +1493,7 @@
   <p class="ruleta-ayuda reveal">Amor aqui podras obtener puntos/xp para subir niveles y girar la ruleta cada premio diario sera diferente puede ser algo que te guste como algo que no... recuerda que es suerte(Se manda lo que te toco al bot asi que ojo) 💗</p>
 </section>
 
-<!-- ===== SECCIÓN RACHAS ===== -->
+<!-- SECCIÓN RACHAS -->
 <section class="rachas-section" id="rachas">
   <div class="seccion-titulo reveal">
     <span class="eyebrow script">tu constancia</span>
@@ -1532,7 +1532,7 @@
   </div>
 </section>
 
-<!-- ===== TIENDA ===== -->
+<!-- TIENDA -->
 <section class="tienda-section" id="tienda">
   <div class="seccion-titulo reveal">
     <span class="eyebrow script">gasta tus puntos</span>
@@ -2023,28 +2023,57 @@ if (audioCancion) {
     });
 }
 
-// ---- Ruleta ----
+// =============================================
+// ===== RULETA CON SISTEMA DE PESOS =====
+// =============================================
+
+// Sistema de premios con PESOS
+// Peso ALTO = más probable | Peso BAJO = menos probable
 const PREMIOS_RULETA = [
-    "Vale por comprar un squishy de queso",
-    "Vale porque me preguntes cualquier cosa",
-    "Vale por una pajita",
-    "Vale por estar 5m callado",
-    "Vale por ver una peli juntos",
-    "Vale por chuparte la concha",
-    "Vale por desenojarme 1 vez",
-    "Vale por no usar la pc x 1h",
-    "Vale por 1 dedeada en tu ano",
-    "Vale por mirar la peli que tu quieras",
-    "Vale comprarte una tanga",
-    "Vale por una tematica a eleccion (Cuento)",
-    "Vale por +100 puntos",
-    "Vale por -50 puntos",
-    "Vale por +100xp",
-    "Vale por -50xp",
-    "Vale por 1 video haciendo pis",
-    "Vale por 1 video poniendo babita en los pezones",
-    "Vale por 1 pajita en videollamada"
+    // ===== PREMIOS COMUNES (peso alto) =====
+    { texto: "Vale porque me preguntes cualquier cosa", peso: 15 },
+    { texto: "Vale por estar 5m callado", peso: 15 },
+    { texto: "Vale por desenojarme 1 vez", peso: 15 },
+    { texto: "Vale por no usar la pc x 1h", peso: 12 },
+    { texto: "Vale por ver una peli juntos", peso: 10 },
+    { texto: "Vale por mirar la peli que tu quieras", peso: 10 },
+    
+    // ===== PREMIOS MEDIOS (peso medio) =====
+    { texto: "Vale por una pajita", peso: 8 },
+    { texto: "Vale por 1 dedeada en tu ano", peso: 7 },
+    { texto: "Vale por una tematica a eleccion (Cuento)", peso: 6 },
+    { texto: "Vale por 1 video haciendo pis", peso: 5 },
+    { texto: "Vale por -50 puntos", peso: 5 },
+    { texto: "Vale por -50xp", peso: 5 },
+    
+    // ===== PREMIOS ESPECIALES (peso bajo) =====
+    { texto: "Vale por chuparte la concha", peso: 4 },
+    { texto: "Vale por 1 pajita en videollamada", peso: 4 },
+    { texto: "Vale comprarte una tanga", peso: 3 },
+    { texto: "Vale por comprar un squishy de queso", peso: 3 },
+    { texto: "Vale por 1 video poniendo babita en los pezones", peso: 2 },
+    
+    // ===== PREMIOS DE PUNTOS/XP POSITIVOS (peso muy bajo) =====
+    { texto: "Vale por +100 puntos", peso: 2 },
+    { texto: "Vale por +100xp", peso: 2 }
 ];
+
+// Función para elegir premio basado en pesos
+function elegirPremioConPesos() {
+    const pesoTotal = PREMIOS_RULETA.reduce((sum, p) => sum + p.peso, 0);
+    let random = Math.random() * pesoTotal;
+    
+    for (let i = 0; i < PREMIOS_RULETA.length; i++) {
+        random -= PREMIOS_RULETA[i].peso;
+        if (random <= 0) {
+            return { indice: i, premio: PREMIOS_RULETA[i].texto };
+        }
+    }
+    
+    // Fallback
+    return { indice: 0, premio: PREMIOS_RULETA[0].texto };
+}
+
 const COSTO_GIRO = 65;
 const rueda = document.getElementById('rueda-disco');
 const btnGirar = document.getElementById('btn-girar');
@@ -2103,7 +2132,8 @@ if (btnGirar && rueda && resultadoEl) {
         btnGirar.disabled = true;
 
         const segmentos = PREMIOS_RULETA.length;
-        const indiceGanador = Math.floor(Math.random() * segmentos);
+        const resultadoSorteo = elegirPremioConPesos();
+        const indiceGanador = resultadoSorteo.indice;
         const gradosPorSegmento = 360 / segmentos;
         const vueltasExtra = 5 * 360;
         const centroSegmento = indiceGanador * gradosPorSegmento + gradosPorSegmento / 2;
@@ -2117,7 +2147,7 @@ if (btnGirar && rueda && resultadoEl) {
         setTimeout(async () => {
             girando = false;
             btnGirar.disabled = false;
-            const premio = PREMIOS_RULETA[indiceGanador];
+            const premio = resultadoSorteo.premio;
             
             let puntosExtra = 0;
             let xpExtra = 0;
