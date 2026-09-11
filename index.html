@@ -201,6 +201,38 @@
       50% { transform: translateY(8px); }
     }
 
+    /* ===== BOTÓN DE AMOR DEL INICIO ===== */
+    .boton-amor-inicio {
+      margin-top: 2.2rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      opacity: 0;
+      animation: subir 1s ease forwards 1.1s;
+    }
+    .corazon-inicio-svg {
+      width: 64px;
+      height: 64px;
+      fill: var(--rosa);
+      filter: drop-shadow(0 6px 20px rgba(242, 107, 158, 0.5));
+      transform: scale(1);
+      transition: transform 0.06s linear;
+    }
+    .corazon-inicio-hint {
+      display: block;
+      margin-top: 0.5rem;
+      font-family: 'Caveat', cursive;
+      font-size: 1.1rem;
+      color: var(--lavanda);
+      opacity: 0.6;
+    }
+
     .seccion-titulo {
       text-align: center; padding: 0 1.5rem; margin-bottom: 3.5rem;
     }
@@ -1315,6 +1347,14 @@
   <span class="hero-eyebrow script">para el amor de mi vida</span>
   <h1>MI AMOR</h1>
   <p class="subtitulo">Perdon por todo amor</p>
+
+  <button id="boton-amor-inicio" class="boton-amor-inicio" type="button" aria-label="Presiona el amor">
+    <svg id="corazon-inicio-svg" viewBox="0 0 24 24" class="corazon-inicio-svg">
+      <path d="M12 21s-7.5-4.6-10-9.3C.4 8.3 2 4.5 5.7 4.5c2 0 3.4 1 4.3 2.4.9-1.4 2.3-2.4 4.3-2.4 3.7 0 5.3 3.8 3.7 7.2-2.5 4.7-10 9.3-10 9.3z"/>
+    </svg>
+  </button>
+  <span class="corazon-inicio-hint script">tócalo o mantenlo presionado</span>
+
   <div class="scroll-cue">
     <span>desliza</span>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1397,37 +1437,37 @@
 <section class="razones">
   <div class="seccion-titulo reveal">
     <span class="eyebrow script">toca cada tarjeta</span>
-    <h2>Las cosas que mas <span>ame</span> del dia 09/09/2026</h2>
+    <h2>Las cosas que mas <span>ame</span> del dia 10/09/2026</h2>
   </div>
   <div class="razones-grid">
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">01</span></div>
-        <div class="flip-back">Dormir en llamada</div>
+        <div class="flip-back">Haber dormido juntos en llamada</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">02</span></div>
-        <div class="flip-back">Haber podido hablar</div>
+        <div class="flip-back">Poder haberte hablado en la clinica y reinrnos de q no te atendieron skjdsk</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">03</span></div>
-        <div class="flip-back">Que me mostraras como te bañabas</div>
+        <div class="flip-back">Que me hayas mostrado como te bañabas</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">04</span></div>
-        <div class="flip-back">Haber dormido la siesta juntos</div>
+        <div class="flip-back">Que me hayas mostrado como te maquillabas y lo hermosa q quedabas</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">05</span></div>
-        <div class="flip-back">Que la gorda de wayra se haya ido</div>
+        <div class="flip-back">Que solo hayamos sido tu y yo durmiendo juntitos</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
@@ -1446,9 +1486,9 @@
     <h2>La cancion <span>que mas te gusta</span></h2>
   </div>
   <div class="cancion-player reveal">
-    <p class="cancion-info">MILO J - MILAGROSA</p>
+    <p class="cancion-info">Milo J, Silvio Rodríguez - Luciérnagas</p>
     <audio id="cancion-audio" controls>
-      <source src="https://www.image2url.com/r2/default/audio/1789007811093-5f16b124-f0c3-406e-9745-d190ab78ac6e.mp3" type="audio/mpeg">
+      <source src="https://s51.aconvert.com/convert/p3r68-cdx67/xoem8-79f5h.mp3" type="audio/mpeg">
       Tu navegador no soporta audio.
     </audio>
   </div>
@@ -1549,9 +1589,9 @@
 <section class="carta-wrap">
   <article class="carta reveal">
     <h3>Para ti</h3>
-    <p>Hola amor hoy estuvimos mas juntos que hace 2 dias</p>
-    <p>Espero que estemos mejor ahora y ps nada solo que sigo algo raro creo yo no se</p>
-    <p>Te amo mucho y quiero que todo este bien</p>
+    <p>OLA MIAMOCHITO hoy estuvimos muy bien en la mañananita y en la noche estuvimos algo mal pero todo se puede mejorar siempre ksjdks</p>
+    <p>Anhelo que estemos mejor cada dia sin discuciones malentendidos ni nada por el estilo ya que eres todo lo que amo</p>
+    <p>Te amo mucho y imploro todo esto salga bien para poder seguir a tu lado</p>
     <p>Esta pagina la actualizare a diario con lo que hacemos en el dia: <strong>TE AMO</strong>, hoy y mañana y siempre</p>
     <p class="firma">— tuyo, siempre</p>
   </article>
@@ -1561,7 +1601,7 @@
 <section class="cierre">
   <h2 class="script">¿Lista para una <span>ultima</span> mirada?</h2>
   <button id="boton-amor" type="button">Presiona aquí</button>
-  <p class="mensaje-secreto" id="mensaje-secreto">Te amo mi bebita tikititatikitita♥</p>
+  <p class="mensaje-secreto" id="mensaje-secreto">Si ves esto dime cuanto mides jskdjks♥</p>
 </section>
 
 <!-- DISCORD -->
@@ -2055,7 +2095,11 @@ const PREMIOS_RULETA = [
     
     // ===== PREMIOS DE PUNTOS/XP POSITIVOS (peso muy bajo) =====
     { texto: "Vale por +100 puntos", peso: 2 },
-    { texto: "Vale por +100xp", peso: 2 }
+    { texto: "Vale por +100xp", peso: 2 },
+
+    // ===== PREMIOS NUEVOS (peso muy bajo) =====
+    { texto: "Vale por maquillaje a elección", peso: 1 },
+    { texto: "Vale por jugar juntos ahora mismo durante 15m", peso: 1 }
 ];
 
 // Función para elegir premio basado en pesos
@@ -2231,7 +2275,7 @@ if (btnGirar && rueda && resultadoEl) {
     });
 }
 
-// ---- Botón de amor ----
+// ---- Botón de amor (cierre) ----
 const botonAmor = document.getElementById('boton-amor');
 const msgSecreto = document.getElementById('mensaje-secreto');
 if (botonAmor) {
@@ -2245,6 +2289,99 @@ if (botonAmor) {
         }
     });
 }
+
+// =============================================
+// ===== BOTÓN DE AMOR DEL INICIO (NUEVO) =====
+// =============================================
+
+(function() {
+    const btnAmorInicio = document.getElementById('boton-amor-inicio');
+    const corazonSvg = document.getElementById('corazon-inicio-svg');
+    if (!btnAmorInicio || !corazonSvg) return;
+
+    // ---- Lluvia de corazones cayendo desde arriba de la pantalla ----
+    function crearCorazonCayendo() {
+        const el = document.createElement('div');
+        el.textContent = '♥';
+        el.style.position = 'fixed';
+        el.style.top = '-40px';
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.fontSize = (16 + Math.random() * 26) + 'px';
+        el.style.color = Math.random() > 0.5 ? '#f26b9e' : '#b79bea';
+        el.style.opacity = String(0.65 + Math.random() * 0.35);
+        el.style.pointerEvents = 'none';
+        el.style.zIndex = '150';
+        el.style.willChange = 'transform, opacity';
+        el.style.transition = 'transform ' + (2.6 + Math.random() * 2.2) + 's linear, opacity 2.4s linear';
+        document.body.appendChild(el);
+
+        requestAnimationFrame(() => {
+            const caidaX = (Math.random() - 0.5) * 60;
+            el.style.transform = 'translate(' + caidaX + 'px, ' + (window.innerHeight + 80) + 'px) rotate(' + (Math.random() * 360) + 'deg)';
+            el.style.opacity = '0';
+        });
+
+        setTimeout(() => el.remove(), 5200);
+    }
+
+    function lluviaDeCorazones(cantidad) {
+        for (let i = 0; i < cantidad; i++) {
+            setTimeout(crearCorazonCayendo, i * 55);
+        }
+    }
+
+    // ---- Mantener presionado: el corazón crece cada vez más ----
+    let presionando = false;
+    let escala = 1;
+    let animId = null;
+    const ESCALA_MAX = 2.8;
+    const VELOCIDAD_CRECIMIENTO = 0.028;
+
+    function crecer() {
+        if (!presionando) return;
+        escala = Math.min(ESCALA_MAX, escala + VELOCIDAD_CRECIMIENTO);
+        corazonSvg.style.transform = 'scale(' + escala + ')';
+
+        if (escala >= ESCALA_MAX) {
+            // Llegó al tope: explota en lluvia de corazones y reinicia
+            lluviaDeCorazones(24);
+            escala = 1;
+            corazonSvg.style.transform = 'scale(1)';
+            presionando = false;
+            mostrarToast('💗💗💗');
+            return;
+        }
+        animId = requestAnimationFrame(crecer);
+    }
+
+    function empezarPresion(e) {
+        if (e.cancelable) e.preventDefault();
+        presionando = true;
+        escala = 1;
+        if (animId) cancelAnimationFrame(animId);
+        animId = requestAnimationFrame(crecer);
+    }
+
+    function soltarPresion() {
+        if (!presionando) return;
+        presionando = false;
+        if (animId) cancelAnimationFrame(animId);
+        corazonSvg.style.transform = 'scale(1)';
+        escala = 1;
+    }
+
+    btnAmorInicio.addEventListener('mousedown', empezarPresion);
+    btnAmorInicio.addEventListener('touchstart', empezarPresion, { passive: false });
+    btnAmorInicio.addEventListener('mouseup', soltarPresion);
+    btnAmorInicio.addEventListener('mouseleave', soltarPresion);
+    btnAmorInicio.addEventListener('touchend', soltarPresion);
+    btnAmorInicio.addEventListener('touchcancel', soltarPresion);
+
+    // Click/tap corto -> cae una lluvia de corazones desde arriba
+    btnAmorInicio.addEventListener('click', function() {
+        lluviaDeCorazones(16);
+    });
+})();
 
 // =============================================
 // ===== FUNCIÓN PARA GUARDAR EN EL BOT =====
