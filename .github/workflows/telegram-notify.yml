@@ -1,4 +1,4 @@
-name: Notificar actualización por Telegram
+name: Notificaciones Telegram
 
 on:
   push:
@@ -6,14 +6,30 @@ on:
       - main
     paths:
       - 'index.html'
+  schedule:
+    # 03:00 UTC = 00:00 hora Argentina (UTC-3)
+    # Formato cron: minuto hora día mes día-semana
+    - cron: '0 3 21 9 *'
+  workflow_dispatch: # para probar manualmente desde GitHub
 
 jobs:
   notify:
     runs-on: ubuntu-latest
     steps:
+      - name: Detectar tipo de evento
+        id: tipo
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "mensaje=🌻 FELIZ 21 DE SEPTIEMBRE MI BEBITA MUAMUAMUA 💗🌻" >> $GITHUB_OUTPUT
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "mensaje=🧪 Prueba manual del aviso 💗" >> $GITHUB_OUTPUT
+          else
+            echo "mensaje=Pagina actualizada hoy amor, te amoo 💗" >> $GITHUB_OUTPUT
+          fi
+
       - name: Enviar mensaje a Telegram
         run: |
-          MESSAGE="Pagina actualizada hoy amor, te amoo 💗"
+          MESSAGE="${{ steps.tipo.outputs.mensaje }}"
           BOT_TOKEN="${{ secrets.TELEGRAM_BOT_TOKEN }}"
 
           for CHAT_ID in 8617899274 6910816114; do
