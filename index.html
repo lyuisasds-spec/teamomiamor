@@ -111,7 +111,7 @@
     }
     .amor-toast.mostrar { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    /* ===== BOTÓN CASINO (esquina inferior derecha) ===== */
+    /* ===== BOTÓN CASINO ===== */
     .casino-btn {
       position: fixed;
       bottom: 4.8rem;
@@ -139,9 +139,7 @@
       transform: translateY(-3px) scale(1.06);
       box-shadow: 0 12px 32px rgba(255, 107, 53, 0.8);
     }
-    .casino-btn:active {
-      transform: translateY(0) scale(0.96);
-    }
+    .casino-btn:active { transform: translateY(0) scale(0.96); }
     @keyframes casino-pulso {
       0%, 100% { box-shadow: 0 8px 24px rgba(255, 107, 53, 0.5); }
       50% { box-shadow: 0 8px 32px rgba(255, 107, 53, 0.9); }
@@ -283,6 +281,127 @@
       margin-top: 1.8rem;
       font-family: 'Caveat', cursive; font-size: 1.4rem;
       color: var(--dorado); opacity: 0.85;
+    }
+
+    /* ===== SECCIÓN 21 DE SEPTIEMBRE (DÍA DE LA PRIMAVERA - ARGENTINA) ===== */
+    .primavera-section {
+      display: none;
+      padding: 6rem 1.5rem;
+      background:
+        radial-gradient(circle at 50% 20%, rgba(251, 212, 138, 0.25), transparent 60%),
+        linear-gradient(180deg, #2a1a47, #1e1035);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .primavera-section.activa {
+      display: block;
+      animation: aparecerPrimavera 1.2s ease;
+    }
+    @keyframes aparecerPrimavera {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .primavera-section::before,
+    .primavera-section::after {
+      content: '🌻';
+      position: absolute;
+      font-size: 12rem;
+      opacity: 0.05;
+      pointer-events: none;
+    }
+    .primavera-section::before { top: -30px; left: -30px; transform: rotate(-15deg); }
+    .primavera-section::after { bottom: -30px; right: -30px; transform: rotate(20deg); }
+
+    .primavera-eyebrow {
+      font-family: 'Caveat', cursive;
+      color: var(--dorado);
+      font-size: 1.8rem;
+      display: block;
+      margin-bottom: 0.3rem;
+    }
+    .primavera-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 700;
+      background: linear-gradient(120deg, #fbd48a, #ffcc33, #f9a825);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      margin-bottom: 0.5rem;
+      text-shadow: 0 0 60px rgba(251, 212, 138, 0.3);
+    }
+    .primavera-sub {
+      color: var(--lavanda-suave);
+      font-size: 1.05rem;
+      max-width: 34rem;
+      margin: 0 auto 2.5rem;
+      opacity: 0.9;
+      line-height: 1.7;
+    }
+    .flor-grande {
+      display: inline-block;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 1rem;
+      position: relative;
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .flor-grande:hover { transform: scale(1.06); }
+    .flor-grande:active { transform: scale(0.95); }
+    .flor-grande svg {
+      width: clamp(140px, 30vw, 200px);
+      height: clamp(140px, 30vw, 200px);
+      filter: drop-shadow(0 12px 40px rgba(251, 212, 138, 0.6));
+      animation: flotarFlor 3s ease-in-out infinite;
+    }
+    @keyframes flotarFlor {
+      0%, 100% { transform: translateY(0) rotate(-2deg); }
+      50% { transform: translateY(-12px) rotate(2deg); }
+    }
+    .flor-grande .petalo { fill: #ffcc33; stroke: #f9a825; stroke-width: 1; }
+    .flor-grande .petalo-interior { fill: #ffdb70; }
+    .flor-grande .centro { fill: #8b5a00; }
+    .flor-grande .centro-punto { fill: #5c3d00; }
+    .primavera-contador {
+      margin-top: 1.5rem;
+      font-family: 'Caveat', cursive;
+      font-size: 1.4rem;
+      color: var(--dorado);
+      opacity: 0.9;
+    }
+    .primavera-contador span { color: var(--rosa); font-weight: 700; font-size: 1.6rem; }
+    .flor-cayendo {
+      position: fixed;
+      top: -50px;
+      pointer-events: none;
+      z-index: 200;
+      font-size: 32px;
+      will-change: transform, opacity;
+    }
+    .primavera-mensaje {
+      margin-top: 2.5rem;
+      font-family: 'Caveat', cursive;
+      font-size: clamp(1.3rem, 4vw, 1.8rem);
+      color: var(--dorado);
+      max-width: 40rem;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+      min-height: 3rem;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    .primavera-mensaje.mostrar { opacity: 1; }
+    @media (max-width: 520px) {
+      .primavera-section { padding: 4rem 1.2rem; }
+      .primavera-titulo { font-size: 2rem; }
+      .primavera-sub { font-size: 0.95rem; }
     }
 
     .album {
@@ -1363,6 +1482,51 @@
   </div>
 </section>
 
+<!-- ===== SECCIÓN DÍA DE LA PRIMAVERA (SOLO 21 SEPTIEMBRE - HORA ARGENTINA) ===== -->
+<section class="primavera-section" id="primavera-section">
+  <span class="primavera-eyebrow script">21 de septiembre · día de la primavera</span>
+  <h2 class="primavera-titulo">🌻 Feliz Primavera, mi amor 🌻</h2>
+  <p class="primavera-sub">
+    Hoy es el día de las flores amarillas, y quién mejor que vos para recibirlas todas.
+    Este año no te las puedo dar en persona, así que te las mando por acá.<br>
+    <strong style="color:var(--dorado);">Tocá la flor y mirá lo que pasa.</strong> 💗
+  </p>
+
+  <button class="flor-grande" id="flor-grande" type="button" aria-label="Tocar la flor amarilla">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <ellipse class="petalo" cx="100" cy="40" rx="22" ry="38" />
+      <ellipse class="petalo" cx="100" cy="40" rx="22" ry="38" transform="rotate(45 100 100)" />
+      <ellipse class="petalo" cx="100" cy="40" rx="22" ry="38" transform="rotate(90 100 100)" />
+      <ellipse class="petalo" cx="100" cy="40" rx="22" ry="38" transform="rotate(135 100 100)" />
+      <ellipse class="petalo" cx="100" cy="40" rx="22" ry="38" transform="rotate(180 100 100)" />
+      <ellipse class="petalo" cx="100" cy="40" rx="22" ry="38" transform="rotate(225 100 100)" />
+      <ellipse class="petalo" cx="100" cy="40" rx="22" ry="38" transform="rotate(270 100 100)" />
+      <ellipse class="petalo" cx="100" cy="40" rx="22" ry="38" transform="rotate(315 100 100)" />
+      <ellipse class="petalo-interior" cx="100" cy="55" rx="14" ry="24" />
+      <ellipse class="petalo-interior" cx="100" cy="55" rx="14" ry="24" transform="rotate(45 100 100)" />
+      <ellipse class="petalo-interior" cx="100" cy="55" rx="14" ry="24" transform="rotate(90 100 100)" />
+      <ellipse class="petalo-interior" cx="100" cy="55" rx="14" ry="24" transform="rotate(135 100 100)" />
+      <ellipse class="petalo-interior" cx="100" cy="55" rx="14" ry="24" transform="rotate(180 100 100)" />
+      <ellipse class="petalo-interior" cx="100" cy="55" rx="14" ry="24" transform="rotate(225 100 100)" />
+      <ellipse class="petalo-interior" cx="100" cy="55" rx="14" ry="24" transform="rotate(270 100 100)" />
+      <ellipse class="petalo-interior" cx="100" cy="55" rx="14" ry="24" transform="rotate(315 100 100)" />
+      <circle class="centro" cx="100" cy="100" r="22" />
+      <circle class="centro-punto" cx="93" cy="94" r="3" />
+      <circle class="centro-punto" cx="107" cy="94" r="3" />
+      <circle class="centro-punto" cx="100" cy="105" r="3" />
+      <circle class="centro-punto" cx="91" cy="103" r="2" />
+      <circle class="centro-punto" cx="109" cy="103" r="2" />
+      <circle class="centro-punto" cx="100" cy="88" r="2" />
+    </svg>
+  </button>
+
+  <p class="primavera-contador">Has lanzado <span id="contador-flores">0</span> flores 💗</p>
+
+  <p class="primavera-mensaje" id="primavera-mensaje">
+    Te amo mucho mucho mucho mi bebita hermosa 🌻💗
+  </p>
+</section>
+
 <!-- CONTADOR -->
 <section class="contador">
   <div class="seccion-titulo reveal">
@@ -1437,37 +1601,37 @@
 <section class="razones">
   <div class="seccion-titulo reveal">
     <span class="eyebrow script">toca cada tarjeta</span>
-    <h2>Las cosas que mas <span>ame</span> del dia 19/09/2026</h2>
+    <h2>Las cosas que mas <span>ame</span> del dia 20/09/2026</h2>
   </div>
   <div class="razones-grid">
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">01</span></div>
-        <div class="flip-back">Poder dormir juntitos</div>
+        <div class="flip-back">Haber dormido juntitos noshotros dosh</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">02</span></div>
-        <div class="flip-back">Haber visto la serie juntos</div>
+        <div class="flip-back">Cagarnos de risa cuando te empzaste a caminar lento en bloxburg</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">03</span></div>
-        <div class="flip-back">reirnos con las pelotudeces q decimos</div>
+        <div class="flip-back">Hacerte la pagina y darte mimitos</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">04</span></div>
-        <div class="flip-back">jugar con akemy escapa del queso</div>
+        <div class="flip-back">Haber jugado juntitos al bloxbvurgo y jujgar aa las escondidas</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
       <div class="flip-inner">
         <div class="flip-front"><span class="num">05</span></div>
-        <div class="flip-back">Jugar juntos bloxburg</div>
+        <div class="flip-back">Ver juntos el pq te re cagabas de risa KSJDKSJDK</div>
       </div>
     </div>
     <div class="flip-card reveal" tabindex="0">
@@ -1589,9 +1753,9 @@
 <section class="carta-wrap">
   <article class="carta reveal">
     <h3>Para ti</h3>
-    <p>OLAAAAAAA MI AMORR perdon por lo que paso hace un ratit sinceramente la broma se me fue de las mano</p>
-    <p>te amo mucho y dienpre te tengk en cuents pars todo miamor te pido perdon por actuar de ral forma</p>
-    <p>Te amo mi bebita tikitita si quieres decirme dualquier cosa te escucho siempre </p>
+    <p>OLAAAA MI VIDAAA TE AMO MUCHO MIBEBITAA HERMOSHA COME SIEMPRE VOS NO DEJES DE COMER POR QUE PIENSES QUE ESTAS "GORDA"</p>
+    <p>Te amo muchote y siempre pensa en vos y en lo que haces osea me refiero a como te cuidas y trodo eso pelotuda te amo tanto tanto tanto</p>
+    <p>Vos sos el amor de mi vida y espera una sorpresita</p>
     <p>Esta pagina la actualizare a diario con lo que hacemos en el dia: <strong>TE AMO</strong>, hoy y mañana y siempre</p>
     <p class="firma">— tuyo, siempre</p>
   </article>
@@ -2067,42 +2231,30 @@ if (audioCancion) {
 // ===== RULETA CON SISTEMA DE PESOS =====
 // =============================================
 
-// Sistema de premios con PESOS
-// Peso ALTO = más probable | Peso BAJO = menos probable
 const PREMIOS_RULETA = [
-    // ===== PREMIOS COMUNES (peso alto) =====
     { texto: "Vale porque me preguntes cualquier cosa", peso: 15 },
     { texto: "Vale por estar 5m callado", peso: 10 },
     { texto: "Vale por desenojarme 1 vez", peso: 10 },
     { texto: "Vale por no usar la pc x 1h", peso: 10 },
     { texto: "Vale por ver una peli juntos", peso: 10 },
     { texto: "Vale por mirar la peli que tu quieras", peso: 10 },
-    
-    // ===== PREMIOS MEDIOS (peso medio) =====
     { texto: "Vale por una pajita", peso: 8 },
     { texto: "Vale por 1 dedeada en tu ano", peso: 7 },
     { texto: "Vale por una tematica a eleccion (Cuento)", peso: 6 },
     { texto: "Vale por 1 video haciendo pis", peso: 5 },
     { texto: "Vale por -50 puntos", peso: 5 },
     { texto: "Vale por -50xp", peso: 5 },
-    
-    // ===== PREMIOS ESPECIALES (peso bajo) =====
     { texto: "Vale por chuparte la concha", peso: 4 },
     { texto: "Vale por 1 pajita en videollamada", peso: 4 },
     { texto: "Vale comprarte una tanga", peso: 4 },
     { texto: "Vale por comprar un squishy de queso", peso: 4 },
     { texto: "Vale por 1 video poniendo babita en los pezones", peso: 4 },
-    
-    // ===== PREMIOS DE PUNTOS/XP POSITIVOS (peso muy bajo) =====
     { texto: "Vale por +100 puntos", peso: 2 },
     { texto: "Vale por +100xp", peso: 2 },
-
-    // ===== PREMIOS NUEVOS (peso muy bajo) =====
     { texto: "Vale por maquillaje a elección", peso: 2 },
     { texto: "Vale por jugar juntos ahora mismo durante 15m", peso: 1 }
 ];
 
-// Función para elegir premio basado en pesos
 function elegirPremioConPesos() {
     const pesoTotal = PREMIOS_RULETA.reduce((sum, p) => sum + p.peso, 0);
     let random = Math.random() * pesoTotal;
@@ -2114,7 +2266,6 @@ function elegirPremioConPesos() {
         }
     }
     
-    // Fallback
     return { indice: 0, premio: PREMIOS_RULETA[0].texto };
 }
 
@@ -2291,7 +2442,7 @@ if (botonAmor) {
 }
 
 // =============================================
-// ===== BOTÓN DE AMOR DEL INICIO (NUEVO) =====
+// ===== BOTÓN DE AMOR DEL INICIO =====
 // =============================================
 
 (function() {
@@ -2299,7 +2450,6 @@ if (botonAmor) {
     const corazonSvg = document.getElementById('corazon-inicio-svg');
     if (!btnAmorInicio || !corazonSvg) return;
 
-    // ---- Lluvia de corazones cayendo desde arriba de la pantalla ----
     function crearCorazonCayendo() {
         const el = document.createElement('div');
         el.textContent = '♥';
@@ -2330,7 +2480,6 @@ if (botonAmor) {
         }
     }
 
-    // ---- Mantener presionado: el corazón crece cada vez más ----
     let presionando = false;
     let escala = 1;
     let animId = null;
@@ -2343,7 +2492,6 @@ if (botonAmor) {
         corazonSvg.style.transform = 'scale(' + escala + ')';
 
         if (escala >= ESCALA_MAX) {
-            // Llegó al tope: explota en lluvia de corazones y reinicia
             lluviaDeCorazones(24);
             escala = 1;
             corazonSvg.style.transform = 'scale(1)';
@@ -2377,10 +2525,127 @@ if (botonAmor) {
     btnAmorInicio.addEventListener('touchend', soltarPresion);
     btnAmorInicio.addEventListener('touchcancel', soltarPresion);
 
-    // Click/tap corto -> cae una lluvia de corazones desde arriba
     btnAmorInicio.addEventListener('click', function() {
         lluviaDeCorazones(16);
     });
+})();
+
+// =============================================
+// ===== DÍA DE LA PRIMAVERA (21 DE SEPTIEMBRE - HORA ARGENTINA) =====
+// =============================================
+
+(function() {
+    // 🔧 Para forzar la sección sin tocar código:
+    //   - Agregá ?primavera a la URL:  pagina.html?primavera
+    //   - O poné FORZAR_PRIMAVERA = true acá abajo.
+    const FORZAR_PRIMAVERA = false;
+
+    // 🔥 Fecha actual FORZADA a zona horaria Argentina (UTC-3)
+    //    Así se activa exactamente a las 00:00 del 21/09 hora argentina,
+    //    sin importar la hora del dispositivo.
+    const ahora = new Date();
+    const fechaArg = new Date(ahora.toLocaleString('en-US', { timeZone: 'America/Argentina/Buenos_Aires' }));
+    const esFechaPrimavera = (fechaArg.getMonth() === 8 && fechaArg.getDate() === 21); // mes 8 = septiembre
+    const esPrimavera = FORZAR_PRIMAVERA
+        || esFechaPrimavera
+        || new URLSearchParams(location.search).has('primavera');
+
+    const seccionPrimavera = document.getElementById('primavera-section');
+    if (!seccionPrimavera) return;
+    if (!esPrimavera) return;
+
+    seccionPrimavera.classList.add('activa');
+
+    // Guardar en localStorage si ya vio la sorpresa este año
+    const yaVioLaSorpresa = localStorage.getItem('primavera_visto_' + fechaArg.getFullYear());
+    if (!yaVioLaSorpresa) {
+        localStorage.setItem('primavera_visto_' + fechaArg.getFullYear(), 'true');
+        setTimeout(() => {
+            lanzarLluviaFlores(18);
+        }, 1500);
+    }
+
+    // ---- CONTADOR DE FLORES ----
+    let contadorFlores = parseInt(localStorage.getItem('primavera_contador_flores') || '0', 10);
+    const contadorEl = document.getElementById('contador-flores');
+    if (contadorEl) contadorEl.textContent = contadorFlores;
+
+    // ---- CREAR FLOR CAYENDO ----
+    function crearFlorCayendo() {
+        const flor = document.createElement('div');
+        flor.className = 'flor-cayendo';
+        flor.textContent = '🌻';
+        flor.style.left = Math.random() * 100 + 'vw';
+        flor.style.fontSize = (24 + Math.random() * 30) + 'px';
+        flor.style.opacity = String(0.75 + Math.random() * 0.25);
+        flor.style.zIndex = '200';
+        flor.style.willChange = 'transform, opacity';
+        flor.style.transition = 'transform ' + (3 + Math.random() * 2.5) + 's linear, opacity 3s linear';
+        flor.style.transform = 'translateY(0) rotate(0deg)';
+
+        document.body.appendChild(flor);
+
+        requestAnimationFrame(() => {
+            const caidaX = (Math.random() - 0.5) * 120;
+            const rotacion = (Math.random() - 0.5) * 720;
+            flor.style.transform = `translate(${caidaX}px, ${window.innerHeight + 100}px) rotate(${rotacion}deg)`;
+            flor.style.opacity = '0';
+        });
+
+        setTimeout(() => flor.remove(), 6000);
+    }
+
+    // ---- LLUVIA DE FLORES ----
+    function lanzarLluviaFlores(cantidad) {
+        for (let i = 0; i < cantidad; i++) {
+            setTimeout(crearFlorCayendo, i * 70);
+        }
+
+        contadorFlores += cantidad;
+        if (contadorEl) contadorEl.textContent = contadorFlores;
+        localStorage.setItem('primavera_contador_flores', contadorFlores);
+
+        const msg = document.getElementById('primavera-mensaje');
+        if (msg) {
+            msg.classList.add('mostrar');
+            clearTimeout(msg._timer);
+            msg._timer = setTimeout(() => msg.classList.remove('mostrar'), 5000);
+        }
+    }
+
+    // ---- EVENTO DEL BOTÓN ----
+    const florGrande = document.getElementById('flor-grande');
+    if (florGrande) {
+        florGrande.addEventListener('click', () => {
+            lanzarLluviaFlores(25);
+        });
+
+        let intervaloPresion = null;
+        florGrande.addEventListener('mousedown', () => {
+            intervaloPresion = setInterval(() => {
+                lanzarLluviaFlores(3);
+            }, 200);
+        });
+        florGrande.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            intervaloPresion = setInterval(() => {
+                lanzarLluviaFlores(3);
+            }, 200);
+        }, { passive: false });
+
+        function detenerPresion() {
+            if (intervaloPresion) {
+                clearInterval(intervaloPresion);
+                intervaloPresion = null;
+            }
+        }
+        florGrande.addEventListener('mouseup', detenerPresion);
+        florGrande.addEventListener('mouseleave', detenerPresion);
+        florGrande.addEventListener('touchend', detenerPresion);
+        florGrande.addEventListener('touchcancel', detenerPresion);
+    }
+
+    console.log('🌻 Feliz día de la primavera mi amor 🌻');
 })();
 
 // =============================================
